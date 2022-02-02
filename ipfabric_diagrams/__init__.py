@@ -25,6 +25,6 @@ SOFTWARE.
 from .graphs import IPFPath
 from .parameters import Unicast, Multicast, Options, Algorithm
 
-__all__ = ['IPFPath', 'Unicast', 'Multicast', 'Options', 'Algorithm', 'icmp']
+__all__ = ["IPFPath", "Unicast", "Multicast", "Options", "Algorithm", "icmp"]
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
