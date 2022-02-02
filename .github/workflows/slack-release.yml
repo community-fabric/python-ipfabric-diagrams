@@ -13,15 +13,20 @@ jobs:
   notify:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: slack - GitHub Actions Slack integration
-        uses: act10ns/slack@v1.5.0
+      - name: Get version from tag
+        id: version
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+        shell: bash
+
+      - name: Notify on Slack
+        uses: openhousepvt/slack@v1.3.2
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          # Configuration file
-          config: .github/slack-release.yml
-          status: starting
-          channel: '#community-fabric-updates'
+          status: ${{ job.status }}
+          platform: 'pypi'
+          version: ${{ steps.version.outputs.version }}
+        if: success()
