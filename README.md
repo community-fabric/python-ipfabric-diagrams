@@ -18,7 +18,7 @@ pip install ipfabric-diagrams
 
 ## Introduction
 
-CURRENTLY WIP - Will be released after IP Fabric version 4.3
+CURRENTLY WIP - Will be released after IP Fabric version 4.3.
 
 ## Authentication
 ### Basic
