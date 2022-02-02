@@ -34,7 +34,7 @@ jobs:
         run: poetry run python -m pytest tests/functional
 
       - name: Run black
-        run: poetry run black ipfabric-diagrams
+        run: poetry run black ipfabric_diagrams
 
       - name: Semantic Release
         env:
