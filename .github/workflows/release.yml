@@ -1,0 +1,47 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Semantic Release
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    # https://github.community/t/how-do-i-specify-job-dependency-running-in-another-workflow/16482
+    if: github.repository == 'community-fabric/python-ipfabric-diagrams'
+    concurrency: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        run: |
+          python -m pip install poetry --upgrade pip
+          poetry config experimental.new-installer false
+          poetry config virtualenvs.create false
+          poetry install
+      - name: Run functional tests
+        env:
+          IPF_URL: ${{ secrets.IPF_URL }}
+          IPF_TOKEN: ${{ secrets.IPF_TOKEN }}
+        run: poetry run python -m pytest tests/functional
+
+      - name: Run black
+        run: poetry run black ipfabric-diagrams
+
+      - name: Semantic Release
+        env:
+          REPOSITORY_PASSWORD: ${{ secrets.PYPI }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY_USERNAME: __token__
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          semantic-release publish -v INFO -D commit_author="github-actions <action@github.com>"

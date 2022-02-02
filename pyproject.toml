@@ -1,0 +1,72 @@
+[tool.poetry]
+name = "ipfabric-diagrams"
+version = "1.0.0"
+description = "Python package for interacting with IP Fabric Diagrams"
+authors = [
+    "Justin Jeffery <justin.jeffery@ipfabric.io>",
+    "Community Fabric <communityfabric@ipfabric.io>"
+]
+license = "MIT"
+readme = "README.md"
+homepage = "https://ipfabric.io/"
+repository = "https://github.com/community-fabric/python-ipfabric-diagrams"
+keywords = ["ipfabric", "ip-fabric", "community-fabric"]
+packages = [
+    { include = "ipfabric_diagrams" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.6.2"
+pydantic = "^1.8.2"
+ipfabric = "^0.7.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
+flake8 = "^4.0.1"
+python-semantic-release = "^7.23.0"
+black = "^21.12b0"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.semantic_release]
+version_variable = [
+    "ipfabric-diagrams/__init__.py:__version__"
+]
+version_toml = [
+    "pyproject.toml:tool.poetry.version"
+]
+major_on_zero = false
+branch = "main"
+upload_to_repository = true
+repository = "pypi"
+upload_to_release = true
+build_command = "poetry build"
+
+
+[tool.black]
+line-length = 120
+target-version = ['py37']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | examples
+  )/
+  | settings.py     # This is where you define files that should not be stylized by black
+                     # the root of the project
+)
+'''
