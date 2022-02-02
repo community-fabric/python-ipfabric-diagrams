@@ -27,4 +27,4 @@ from .parameters import Unicast, Multicast, Options, Algorithm
 
 __all__ = ["IPFPath", "Unicast", "Multicast", "Options", "Algorithm", "icmp"]
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
