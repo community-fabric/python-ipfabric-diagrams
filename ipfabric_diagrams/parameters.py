@@ -102,9 +102,15 @@ class PathLookup(BaseModel):
 
 
 class Multicast(PathLookup, BaseModel):
-    group: IPv4Address
-    source: IPv4Address
-    receiver: Optional[IPv4Address] = None
+    group: Union[IPv4Address, str]
+    source: Union[IPv4Address, str]
+    receiver: Optional[Union[IPv4Address, str]] = None
+
+    @validator('group', 'source', 'receiver')
+    def valid_ip(cls, v):
+        if v and not isinstance(v, IPv4Address):
+            raise ValueError(f'IP "{v}" not a valid IP Address')
+        return v
 
     def parameters(self):
         parameters = self.base_parameters()
@@ -120,8 +126,14 @@ class Multicast(PathLookup, BaseModel):
 
 
 class Unicast(PathLookup, BaseModel):
-    startingPoint: IPv4Interface
-    destinationPoint: IPv4Interface
+    startingPoint: Union[IPv4Interface, str]
+    destinationPoint: Union[IPv4Interface, str]
+
+    @validator('startingPoint', 'destinationPoint')
+    def valid_ip(cls, v):
+        if not isinstance(v, IPv4Interface):
+            raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
+        return v
 
     def parameters(self):
         parameters = self.base_parameters()

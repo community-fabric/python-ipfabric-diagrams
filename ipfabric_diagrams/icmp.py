@@ -1,4 +1,4 @@
-from .models import ICMP
+from .parameters import ICMP
 
 
 ECHO_REPLY = ICMP(type=0, code=0)
