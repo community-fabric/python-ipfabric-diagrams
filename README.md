@@ -13,16 +13,12 @@ digital transformation.
 ## Installation
 
 ```
-pip install ipfabric
+pip install ipfabric-diagrams
 ```
 
 ## Introduction
 
-Please take a look at [API Programmability - Part 1: The Basics](https://ipfabric.io/blog/api-programmability-part-1/)
-for instructions on creating an API token.
-
-Most of the methods and features can be located in [Examples](examples) to show how to use this package. 
-Another great introduction to this package can be found at [API Programmability - Part 2: Python](https://ipfabric.io/blog/api-programmability-python/)
+CURRENTLY WIP - Will be released after IP Fabric version 4.3
 
 ## Authentication
 ### Basic

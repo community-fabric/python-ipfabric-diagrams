@@ -34,7 +34,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
 version_variable = [
-    "ipfabric-diagrams/__init__.py:__version__"
+    "ipfabric_diagrams/__init__.py:__version__"
 ]
 version_toml = [
     "pyproject.toml:tool.poetry.version"
