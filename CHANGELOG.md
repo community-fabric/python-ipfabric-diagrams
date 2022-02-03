@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.5 (2022-02-03)
+### Fix
+* Pipeline ([`8b70e2d`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/8b70e2d20c4d07b56a4f8bb0873b46be9aef520e))
+
 ## v1.0.4 (2022-02-03)
 ### Fix
 * Pipeline ([`fbc15f5`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/fbc15f5108e98635934ec8a3444b12b28ff06926))
