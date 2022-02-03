@@ -18,7 +18,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         image: str = None,
-        settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         """
         Submits a query, does no formating on the parameters.  Use for copy/pasting from the webpage.
@@ -31,8 +31,8 @@ class IPFDiagram(IPFabricAPI):
             if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
                 raise ValueError(f"Snapshot {overlay.snapshotToCompare} not found in IP Fabric.")
             payload["overlay"] = overlay.overlay(self.os_version)
-        if settings:
-            payload['settings'] = settings.settings(self.os_version)
+        if graph_settings:
+            payload["settings"] = graph_settings.settings(self.os_version)
         res = self.post(url, json=payload)
         res.raise_for_status()
         return res.content if image else res.json()
@@ -42,10 +42,13 @@ class IPFDiagram(IPFabricAPI):
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
         overlay: Overlay = None,
-        settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         return self._query(
-            parameters.parameters(self.os_version), snapshot_id=snapshot_id, overlay=overlay, settings=settings
+            parameters.parameters(self.os_version),
+            snapshot_id=snapshot_id,
+            overlay=overlay,
+            graph_settings=graph_settings,
         )
 
     def svg(
@@ -53,14 +56,14 @@ class IPFDiagram(IPFabricAPI):
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
         overlay: Overlay = None,
-        settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         return self._query(
             parameters.parameters(self.os_version),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="svg",
-            settings=settings,
+            graph_settings=graph_settings,
         )
 
     def png(
@@ -68,12 +71,12 @@ class IPFDiagram(IPFabricAPI):
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
         overlay: Overlay = None,
-        settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         return self._query(
             parameters.parameters(self.os_version),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="png",
-            settings=settings,
+            graph_settings=graph_settings,
         )

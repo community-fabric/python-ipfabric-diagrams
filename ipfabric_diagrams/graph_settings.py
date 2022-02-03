@@ -20,7 +20,7 @@ DEFAULT_PATHLOOKUP = json.loads(
 class Style(BaseModel):
     color: Color
     pattern: Optional[str] = 'solid'
-    thicknessThresholds: Optional[list] = [2, 4, 8]
+    thicknessThresholds: Optional[List[int]] = [2, 4, 8]
 
     @validator("pattern")
     def _valid_patterns(cls, v):
