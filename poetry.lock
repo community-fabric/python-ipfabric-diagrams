@@ -361,7 +361,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipfabric"
-version = "0.7.0"
+version = "0.7.18"
 description = "Python package for interacting with IP Fabric"
 category = "main"
 optional = false
@@ -826,7 +826,7 @@ telegram = ["requests"]
 
 [[package]]
 name = "twine"
-version = "3.7.1"
+version = "3.8.0"
 description = "Collection of utilities for publishing packages on PyPI"
 category = "dev"
 optional = false
@@ -842,6 +842,7 @@ requests = ">=2.20"
 requests-toolbelt = ">=0.8.0,<0.9.0 || >0.9.0"
 rfc3986 = ">=1.4.0"
 tqdm = ">=4.14"
+urllib3 = ">=1.26.0"
 
 [[package]]
 name = "typed-ast"
@@ -1150,8 +1151,8 @@ invoke = [
     {file = "invoke-1.6.0.tar.gz", hash = "sha256:374d1e2ecf78981da94bfaf95366216aaec27c2d6a7b7d5818d92da55aa258d3"},
 ]
 ipfabric = [
-    {file = "ipfabric-0.7.0-py3-none-any.whl", hash = "sha256:bbee8359aede10bd41a4fa02d6d1af27d52204e303665c49737f66972461965a"},
-    {file = "ipfabric-0.7.0.tar.gz", hash = "sha256:077c4b3bbe3df96af7e85b59ed767175460c10599085b69741bbab706dec5196"},
+    {file = "ipfabric-0.7.18-py3-none-any.whl", hash = "sha256:e466e0702f00d29cf60f662c2fbc3c649c29afc1c114d3dfe73f09d8146d632e"},
+    {file = "ipfabric-0.7.18.tar.gz", hash = "sha256:2a9ee9a0b4c85729ce1294d64a36a3072e737f31b5a1ed829af91593e25730d2"},
 ]
 jeepney = [
     {file = "jeepney-0.7.1-py3-none-any.whl", hash = "sha256:1b5a0ea5c0e7b166b2f5895b91a08c14de8915afda4407fb5022a195224958ac"},
@@ -1339,8 +1340,8 @@ tqdm = [
     {file = "tqdm-4.62.3.tar.gz", hash = "sha256:d359de7217506c9851b7869f3708d8ee53ed70a1b8edbba4dbcb47442592920d"},
 ]
 twine = [
-    {file = "twine-3.7.1-py3-none-any.whl", hash = "sha256:8c120845fc05270f9ee3e9d7ebbed29ea840e41f48cd059e04733f7e1d401345"},
-    {file = "twine-3.7.1.tar.gz", hash = "sha256:28460a3db6b4532bde6a5db6755cf2dce6c5020bada8a641bb2c5c7a9b1f35b8"},
+    {file = "twine-3.8.0-py3-none-any.whl", hash = "sha256:d0550fca9dc19f3d5e8eadfce0c227294df0a2a951251a4385797c8a6198b7c8"},
+    {file = "twine-3.8.0.tar.gz", hash = "sha256:8efa52658e0ae770686a13b675569328f1fba9837e5de1867bfe5f46a9aefe19"},
 ]
 typed-ast = [
     {file = "typed_ast-1.5.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:183b183b7771a508395d2cbffd6db67d6ad52958a5fdc99f450d954003900266"},

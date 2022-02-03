@@ -1,41 +1,35 @@
-import ipaddress
 from typing import Optional, Union
+from urllib.parse import urljoin
+
 from ipfabric.api import IPFabricAPI
+
+from ipfabric_diagrams.parameters import Unicast, Multicast, Host2GW, Network
 
 
 class IPFPath(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._style = "json"
+        self.base_url = urljoin(str(self.base_url), '/graphs')
 
-    @property
-    def style(self):
-        return self._style
-
-    @style.setter
-    def style(self, style):
-        style = style or "json"
-        if style not in ["json", "svg", "png"]:
-            raise ValueError(f"##ERROR## EXIT -> Graph style '{style}' must be one of ['json', 'svg', 'png']")
-        self._style = style
-
-    def _query(self, payload: dict):
+    def _query(self, parameters: dict, snapshot_id: str = None, image: str = None):
         """
         Submits a query, does no formating on the parameters.  Use for copy/pasting from the webpage.
-        :param payload: dict: Dictionary to submit in POST.
+        :param parameters: dict: Dictionary to submit in POST.
         :return: list: List of Dictionary objects.
         """
-        url = "graphs"
-        if self.style == "svg":
-            url = "graphs/svg"
-        elif self.style == "png":
-            url = "graphs/png"
-        res = self.post(url, json=payload)
+        url = image or '/'
+        res = self.post(url, json=dict(parameters=parameters, snapshot=snapshot_id or self.snapshot_id))
         res.raise_for_status()
-        if self.style == "json":
-            return res.json()
-        else:
-            return res.content
+        return res.content if image else res.json()
+
+    def json(self, parameter: Union[Unicast, Multicast, Host2GW, Network], snapshot_id: str = None):
+        return self._query(parameter.parameters(self.os_version), snapshot_id=snapshot_id)
+
+    def svg(self, parameter: Union[Unicast, Multicast, Host2GW, Network], snapshot_id: str = None):
+        return self._query(parameter.parameters(self.os_version), snapshot_id=snapshot_id, image='svg')
+
+    def png(self, parameter: Union[Unicast, Multicast, Host2GW, Network], snapshot_id: str = None):
+        return self._query(parameter.parameters(self.os_version), snapshot_id=snapshot_id, image='png')
 
     def site(
         self,
@@ -62,45 +56,3 @@ class IPFPath(IPFabricAPI):
         if overlay:
             payload["overlay"] = overlay
         return self._query(payload)
-
-    def host_to_gw(
-        self,
-        src_ip: str,
-        grouping: Optional[str] = "siteName",
-        snapshot_id: Optional[str] = None,
-    ) -> Union[dict, bytes]:
-        """
-        Execute an "Host to Gateway" diagram query for the given set of parameters.
-        :param src_ip: str: Source IP address or subnet
-        :param grouping: str: Group by "siteName", "routingDomain", "stpDomain"
-        :param snapshot_id: str: Snapshot ID to override class default
-        :return: Union[dict, str]: json contains a dictionary with 'graphResult' and 'pathlookup' primary keys.
-                                    If not json then return bytes
-        """
-        self.check_subnets(src_ip)
-        payload = dict(
-            parameters=dict(
-                startingPoint=src_ip,
-                type="pathLookup",
-                pathLookupType="hostToDefaultGW",
-                groupBy=grouping,
-            ),
-            snapshot=snapshot_id or self.snapshot_id,
-        )
-        return self._query(payload)
-
-    @staticmethod
-    def check_subnets(*ips) -> bool:
-        """
-        Checks for valid IP Addresses or Subnet
-        :param ips: ip addresses
-        :return: True if a subnet is found to set to networkMode, False if only hosts
-        """
-        masks = set()
-        for ip in ips:
-            try:
-                masks.add(ipaddress.IPv4Interface(ip).network.prefixlen)
-            except (ipaddress.AddressValueError, ipaddress.NetmaskValueError):
-                raise ipaddress.AddressValueError(f"{ip} is not a valid IP or subnet.")
-
-        return True if masks != {32} else False

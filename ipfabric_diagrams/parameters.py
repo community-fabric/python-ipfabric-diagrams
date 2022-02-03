@@ -5,6 +5,7 @@ from typing import Optional, Union, List
 from pydantic import BaseModel, validator, Field
 
 PORT_REGEX = re.compile(r"^\d*$|^\d*-\d*$")
+ALL_NETWORK = '$main'
 
 
 class ICMP(BaseModel):
@@ -28,7 +29,7 @@ class Algorithm(BaseModel):
     entryPoints: Optional[List[EntryPoint]] = None
 
     @validator('type')
-    def valid_types(cls, v):
+    def _valid_types(cls, v):
         if v not in ['automatic', 'userDefined']:
             raise ValueError(f'Type "{v}" not in ["automatic", "userDefined"]')
         return v
@@ -55,13 +56,13 @@ class PathLookup(BaseModel):
     firstHopAlgorithm: Optional[Algorithm] = Field(default_factory=Algorithm)
 
     @validator('protocol')
-    def valid_protocols(cls, v):
+    def _valid_protocols(cls, v):
         if v.lower() not in ['tcp', 'udp', 'icmp']:
             raise ValueError(f'Protocol "{v}" not in ["tcp", "udp", "icmp"]')
         return v.lower()
 
     @validator('srcPorts', 'dstPorts')
-    def check_ports(cls, v):
+    def _check_ports(cls, v):
         ports = v.replace(" ", "").split(",")
         for p in ports:
             if not PORT_REGEX.match(p):
@@ -71,7 +72,7 @@ class PathLookup(BaseModel):
         return str(",".join(ports))
 
     @validator('tcpFlags')
-    def valid_flags(cls, v):
+    def _valid_flags(cls, v):
         v = [f.lower() for f in v] if v else list()
         if all(f in ["ack", "fin", "psh", "rst", "syn", "urg"] for f in v):
             return v
@@ -85,7 +86,7 @@ class PathLookup(BaseModel):
         else:
             return dict(srcPorts=self.srcPorts, dstPorts=self.dstPorts, flags=self.tcpFlags)
 
-    def base_parameters(self) -> dict:
+    def base_parameters(self, version: str) -> dict:
         return dict(
             type="pathLookup",
             groupBy="siteName",
@@ -107,13 +108,13 @@ class Multicast(PathLookup, BaseModel):
     receiver: Optional[Union[IPv4Address, str]] = None
 
     @validator('group', 'source', 'receiver')
-    def valid_ip(cls, v):
+    def _valid_ip(cls, v):
         if v and not isinstance(v, IPv4Address):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self):
-        parameters = self.base_parameters()
+    def parameters(self, version: str):
+        parameters = self.base_parameters(version)
         parameters.update(dict(
             pathLookupType="multicast",
             group=str(self.group),
@@ -130,13 +131,13 @@ class Unicast(PathLookup, BaseModel):
     destinationPoint: Union[IPv4Interface, str]
 
     @validator('startingPoint', 'destinationPoint')
-    def valid_ip(cls, v):
+    def _valid_ip(cls, v):
         if not isinstance(v, IPv4Interface):
             raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
         return v
 
-    def parameters(self):
-        parameters = self.base_parameters()
+    def parameters(self, version: str):
+        parameters = self.base_parameters(version)
         parameters.update(dict(
             pathLookupType="unicast",
             networkMode=self._check_subnets(),
@@ -153,3 +154,46 @@ class Unicast(PathLookup, BaseModel):
         """
         masks = {ip.network.prefixlen for ip in [self.startingPoint, self.destinationPoint]}
         return True if masks != {32} else False
+
+
+class Host2GW(BaseModel):
+    startingPoint: Union[IPv4Address, str]
+    vrf: Optional[str] = None
+
+    @validator('startingPoint')
+    def _valid_ip(cls, v):
+        if v and not isinstance(v, IPv4Address):
+            raise ValueError(f'IP "{v}" not a valid IP Address')
+        return v
+
+    def parameters(self, version: str):
+        parameters = dict(
+            pathLookupType="hostToDefaultGW",
+            type="pathLookup",
+            groupBy="siteName",
+            startingPoint=str(self.startingPoint)
+        )
+        if self.vrf:
+            parameters['vrf'] = self.vrf
+        return parameters
+
+
+class Network(BaseModel):
+    sites: Optional[Union[str, List[str]]] = [ALL_NETWORK]
+    all_network: Optional[bool] = Field(False, description="Show all sites as clouds, UI option 'All Network'")
+
+    @validator('paths')
+    def _format_paths(cls, v):
+        if isinstance(v, str):
+            return [v]
+        return v
+
+    def parameters(self, version: str):
+        parameters = dict(
+            type="topology",
+            groupBy="siteName",
+            paths=self.sites.copy()
+        )
+        if self.all_network and ALL_NETWORK not in parameters['paths']:
+            parameters['paths'].append(ALL_NETWORK)
+        return parameters

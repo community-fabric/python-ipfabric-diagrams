@@ -23,8 +23,8 @@ SOFTWARE.
 """
 
 from .graphs import IPFPath
-from .parameters import Unicast, Multicast, Options, Algorithm
+from .parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm
 
-__all__ = ["IPFPath", "Unicast", "Multicast", "Options", "Algorithm", "icmp"]
+__all__ = ["IPFPath", "Unicast", "Multicast", "Host2GW", "Network", "Options", "Algorithm", "icmp"]
 
 __version__ = "1.0.5"
