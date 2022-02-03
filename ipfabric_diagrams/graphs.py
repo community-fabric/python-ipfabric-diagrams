@@ -7,7 +7,7 @@ from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Netw
 from ipfabric_diagrams.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings
 
 
-class IPFPath(IPFabricAPI):
+class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.base_url = urljoin(str(self.base_url), "/graphs")

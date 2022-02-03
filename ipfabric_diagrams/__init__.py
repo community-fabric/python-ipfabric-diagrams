@@ -24,10 +24,10 @@ SOFTWARE.
 
 from .graph_parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm, Overlay
 from .graph_settings import NetworkSettings, PathLookupSettings
-from .graphs import IPFPath
+from .graphs import IPFDiagram
 
 __all__ = [
-    "IPFPath",
+    "IPFDiagram",
     "Unicast",
     "Multicast",
     "Host2GW",

@@ -4,6 +4,7 @@ from typing import Optional, List, Union
 from uuid import uuid4
 
 from pydantic import BaseModel, validator, Field
+from pydantic.color import Color
 
 VALID_DEV_TYPES = ["aciLeaf", "aciSpine", "ap", "cloudInstance", "cloudTransitHub", "cloudInternetGw", "cloudNatGw",
                    "cloudRouter", "cloudVpnGw", "fex", "fw", "host", "l3switch", "lb", "nx7000", "phone", "router",
@@ -17,40 +18,56 @@ DEFAULT_PATHLOOKUP = json.loads(
 
 
 class Style(BaseModel):
-    color: str
-    pattern: str
+    color: Color
+    pattern: Optional[str] = 'solid'
     thicknessThresholds: Optional[list] = [2, 4, 8]
 
+    @validator("pattern")
+    def _valid_patterns(cls, v):
+        if v.lower() not in ["solid", "dashed", "dotted"]:
+            raise ValueError(f'Pattern "{v}" not in ["solid", "dashed", "dotted"]')
+        return v.lower()
 
-class EdgeSettings(BaseModel):
+    def style_settings(self, version: str) -> dict:
+        settings = vars(self)
+        settings['color'] = self.color.as_hex()
+        return settings
+
+
+class Setting(BaseModel):
     name: str
     visible: bool = True
     grouped: bool = True
+    style: Style
+    type: str
+
+    def base_settings(self, version: str) -> dict:
+        settings = vars(self)
+        settings['style'] = self.style.style_settings(version)
+        return settings
+
+
+class EdgeSettings(Setting, BaseModel):
     labels: List[str] = ['protocols']
-    style: Style
-    type: str = 'protocol'
 
     def settings(self, version: str) -> dict:
-        settings = vars(self)
-        settings['style'] = vars(self.style)
-        settings['id'] = str(uuid4())  # TODO Remove when IPF does not require
-        return settings
+        base_settings = self.base_settings(version)
+        base_settings['labels'] = self.labels
+        base_settings['id'] = str(uuid4())  # TODO Remove when IPF does not require
+        return base_settings
 
 
-class GroupSettings(BaseModel):
-    name: str
-    visible: bool = True
-    grouped: bool = True
+class GroupSettings(Setting, BaseModel):
     label: str
-    style: Style
     children: List[EdgeSettings]
-    type: str = 'group'
 
     def settings(self, version: str) -> dict:
-        settings = vars(self)
-        settings['style'] = vars(self.style)
-        settings['children'] = [child.settings(version) for child in self.children]
-        return settings
+        base_settings = self.base_settings(version)
+        base_settings.update(dict(
+            children=[child.settings(version) for child in self.children],
+            label=self.label
+        ))
+        return base_settings
 
 
 class PathLookup(BaseModel):
@@ -77,6 +94,25 @@ class GraphSettings(BaseModel):
             raise ValueError(f"Device Types '{v}' must be None or in {VALID_DEV_TYPES}.")
         return v
 
+    def _update_protocol(self, protocol_name: str, proto_attr: str, value: bool = False):
+        for edge in self.edges:
+            if isinstance(edge, EdgeSettings) and edge.name == protocol_name:
+                setattr(edge, proto_attr, value)
+                return True
+            if isinstance(edge, GroupSettings):
+                for child in edge.children:
+                    if child.name == protocol_name:
+                        setattr(edge, proto_attr, value)
+                        edge.grouped = False
+                        return True
+        return False
+
+    def hide_protocol(self, protocol_name: str, unhide: bool = False):
+        return self._update_protocol(protocol_name.lower(), 'visible', unhide)
+
+    def ungroup_protocol(self, protocol_name: str, grouped: bool = False):
+        return self._update_protocol(protocol_name.lower(), 'grouped', grouped)
+
     def settings(self, version: str) -> dict:
         return dict(
             edges=[edge.settings(version) for edge in self.edges],
@@ -89,6 +125,20 @@ class NetworkSettings(GraphSettings):
     def __init__(self):
         edges = [GroupSettings(**edge) for edge in DEFAULT_NETWORK]
         super().__init__(edges=edges, hiddenDeviceTypes=['ap', 'fex', 'host', 'phone'])
+
+    def hide_group(self, group_name: str, unhide: bool = False):
+        for edge in self.edges:
+            if isinstance(edge, GroupSettings) and edge.name == group_name.lower():
+                edge.visible = unhide
+                return True
+        return False
+
+    def ungroup_group(self, group_name: str, group: bool = False):
+        for edge in self.edges:
+            if isinstance(edge, GroupSettings) and edge.name == group_name.lower():
+                edge.grouped = group
+                return True
+        return False
 
 
 class PathLookupSettings(GraphSettings):
