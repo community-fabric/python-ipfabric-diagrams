@@ -47,10 +47,9 @@ jobs:
           git config user.email github-actions@github.com
           semantic-release publish -v INFO -D commit_author="github-actions <action@github.com>"
 
-      - name: Get version from tag
+      - name: Get version
         id: version
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
-        shell: bash
+        run: echo ::set-output name=version::$(poetry version -s)
 
       - name: Notify on Slack
         uses: openhousepvt/slack@v1.3.2
@@ -58,6 +57,6 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           status: ${{ job.status }}
-          platform: 'pypi'
+          platform: 'PYPI'
           version: ${{ steps.version.outputs.version }}
         if: success()

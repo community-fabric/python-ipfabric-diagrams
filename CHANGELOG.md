@@ -2,15 +2,6 @@
 
 <!--next-version-placeholder-->
 
-## v1.0.3 (2022-02-02)
-### Fix
-* Pipeline ([`ae165e4`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/ae165e4b8ae1434f92d37d5b713a6f4ab91ba0a3))
-
-## v1.0.2 (2022-02-02)
-### Fix
-* Pipeline ([`cd17846`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/cd178468846a48792a7dc001c64bac6d3ed1c00a))
-* Pipeline ([`69924d5`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/69924d540f821f51253ec625ba1979c9e4a4ef1a))
-
 ## v1.0.1 (2022-02-02)
 ### Fix
 * Pipeline ([`4d7fd68`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/4d7fd68bcfeb2c2ed8522ccaf43eae74e522d236))
