@@ -8,8 +8,9 @@ from pydantic import BaseModel, validator, Field
 VALID_DEV_TYPES = ["aciLeaf", "aciSpine", "ap", "cloudInstance", "cloudTransitHub", "cloudInternetGw", "cloudNatGw",
                    "cloudRouter", "cloudVpnGw", "fex", "fw", "host", "l3switch", "lb", "nx7000", "phone", "router",
                    "securityManagement", "switch", "unknown", "vgw", "waas", "wlc"]
-DEFAULT_NETWORK = json.loads(importlib.resources.read_text(__package__, "defaultGraphSettings.json"))
-DEFAULT_PATHLOOKUP = json.loads(importlib.resources.read_text(__package__, "defaultPathLookupSettings.json"))
+DEFAULT_NETWORK = json.loads(importlib.resources.read_text("ipfabric_diagrams.factory_defaults", "networkSettings.json"))
+DEFAULT_PATHLOOKUP = json.loads(importlib.resources.read_text("ipfabric_diagrams.factory_defaults",
+                                                              "pathLookupSettings.json"))
 
 
 class Style(BaseModel):
