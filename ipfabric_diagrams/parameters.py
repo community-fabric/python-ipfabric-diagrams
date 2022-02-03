@@ -1,11 +1,12 @@
 import re
 from ipaddress import IPv4Interface, IPv4Address
 from typing import Optional, Union, List
+from uuid import UUID
 
 from pydantic import BaseModel, validator, Field
 
 PORT_REGEX = re.compile(r"^\d*$|^\d*-\d*$")
-ALL_NETWORK = '$main'
+ALL_NETWORK = "$main"
 
 
 class ICMP(BaseModel):
@@ -13,8 +14,45 @@ class ICMP(BaseModel):
     code: int
 
 
+class Overlay(BaseModel):
+    type: str
+    snapshotToCompare: Optional[Union[UUID, str]] = Field(None, description="Snapshot to compare if type is compare.")
+    intentRuleId: Optional[int, str] = Field(
+        None,
+        description="Intent Rule ID if type is intent. Also valid: ['nonRedundantEdges', 'singlePointsOfFailure']",
+    )
+
+    @validator("type")
+    def _valid_types(cls, v):
+        if v not in ["compare", "intent"]:
+            raise ValueError(f'Type "{v}" not in ["compare", "intent"]')
+        return v
+
+    @validator("snapshotToCompare")
+    def _valid_snapshot(cls, v):
+        if v and v in ["$last", "$prev", "$lastLocked"]:
+            return v
+        elif v and isinstance(v, UUID):
+            return str(v)
+        raise ValueError(f'"{v}" is not a Snapshot ID or in ["$last", "$prev", "$lastLocked"]')
+
+    @validator("intentRuleId")
+    def _valid_intentrule(cls, v):
+        if v and (isinstance(v, int) or v in ["nonRedundantEdges", "singlePointsOfFailure"]):
+            return str(v)
+        raise ValueError(f'"{v}" is not an Intent Rule ID or in ["nonRedundantEdges", "singlePointsOfFailure"]')
+
+    def overlay(self, version: str) -> dict:
+        overlay = dict(type=self.type)
+        if self.type == "intent":
+            overlay["intentRuleId"] = self.intentRuleId
+        else:
+            overlay["snapshotToCompare"] = self.snapshotToCompare
+        return overlay
+
+
 class Options(BaseModel):
-    applications: Optional[str] = '.*'
+    applications: Optional[str] = ".*"
     tracked: Optional[bool] = False
 
 
@@ -24,44 +62,44 @@ class EntryPoint(BaseModel):
 
 
 class Algorithm(BaseModel):
-    type: str = 'automatic'
+    type: str = "automatic"
     vrf: Optional[str] = None
     entryPoints: Optional[List[EntryPoint]] = None
 
-    @validator('type')
+    @validator("type")
     def _valid_types(cls, v):
-        if v not in ['automatic', 'userDefined']:
+        if v not in ["automatic", "userDefined"]:
             raise ValueError(f'Type "{v}" not in ["automatic", "userDefined"]')
         return v
 
     def algorithm_parameters(self):
-        if self.type == 'automatic':
+        if self.type == "automatic":
             return dict(type=self.type, vrf=self.vrf) if self.vrf else dict(type=self.type)
         else:
             return dict(type=self.type, entryPoints=[vars(e) for e in self.entryPoints])
 
 
 class PathLookup(BaseModel):
-    protocol: Optional[str] = 'tcp'
-    srcPorts: Optional[Union[str, int]] = '1024-65535'
-    dstPorts: Optional[Union[str, int]] = '80,443'
+    protocol: Optional[str] = "tcp"
+    srcPorts: Optional[Union[str, int]] = "1024-65535"
+    dstPorts: Optional[Union[str, int]] = "80,443"
     tcpFlags: Optional[list] = None
     icmp: Optional[ICMP] = ICMP(type=0, code=0)
     ttl: Optional[int] = 128
     fragmentOffset: Optional[int] = 0
     securedPath: Optional[bool] = True
-    srcRegions: Optional[str] = '.*'
-    dstRegions: Optional[str] = '.*'
+    srcRegions: Optional[str] = ".*"
+    dstRegions: Optional[str] = ".*"
     otherOptions: Optional[Options] = Field(default_factory=Options)
     firstHopAlgorithm: Optional[Algorithm] = Field(default_factory=Algorithm)
 
-    @validator('protocol')
+    @validator("protocol")
     def _valid_protocols(cls, v):
-        if v.lower() not in ['tcp', 'udp', 'icmp']:
+        if v.lower() not in ["tcp", "udp", "icmp"]:
             raise ValueError(f'Protocol "{v}" not in ["tcp", "udp", "icmp"]')
         return v.lower()
 
-    @validator('srcPorts', 'dstPorts')
+    @validator("srcPorts", "dstPorts")
     def _check_ports(cls, v):
         ports = v.replace(" ", "").split(",")
         for p in ports:
@@ -71,7 +109,7 @@ class PathLookup(BaseModel):
                 )
         return str(",".join(ports))
 
-    @validator('tcpFlags')
+    @validator("tcpFlags")
     def _valid_flags(cls, v):
         v = [f.lower() for f in v] if v else list()
         if all(f in ["ack", "fin", "psh", "rst", "syn", "urg"] for f in v):
@@ -79,9 +117,9 @@ class PathLookup(BaseModel):
         raise ValueError(f'TCP Flags "{v}" must be None or combination of ["ack", "fin", "psh", "rst", "syn", "urg"]')
 
     def _l4_options(self):
-        if self.protocol == 'icmp':
+        if self.protocol == "icmp":
             return dict(type=self.icmp.type, code=self.icmp.code)
-        elif self.protocol == 'udp':
+        elif self.protocol == "udp":
             return dict(srcPorts=self.srcPorts, dstPorts=self.dstPorts)
         else:
             return dict(srcPorts=self.srcPorts, dstPorts=self.dstPorts, flags=self.tcpFlags)
@@ -98,7 +136,7 @@ class PathLookup(BaseModel):
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
             otherOptions=vars(self.otherOptions),
-            firstHopAlgorithm=vars(self.firstHopAlgorithm)
+            firstHopAlgorithm=vars(self.firstHopAlgorithm),
         )
 
 
@@ -107,7 +145,7 @@ class Multicast(PathLookup, BaseModel):
     source: Union[IPv4Address, str]
     receiver: Optional[Union[IPv4Address, str]] = None
 
-    @validator('group', 'source', 'receiver')
+    @validator("group", "source", "receiver")
     def _valid_ip(cls, v):
         if v and not isinstance(v, IPv4Address):
             raise ValueError(f'IP "{v}" not a valid IP Address')
@@ -115,14 +153,15 @@ class Multicast(PathLookup, BaseModel):
 
     def parameters(self, version: str):
         parameters = self.base_parameters(version)
-        parameters.update(dict(
-            pathLookupType="multicast",
-            group=str(self.group),
-            source=str(self.source),
-
-        ))
+        parameters.update(
+            dict(
+                pathLookupType="multicast",
+                group=str(self.group),
+                source=str(self.source),
+            )
+        )
         if self.receiver:
-            parameters['receiver'] = str(self.receiver)
+            parameters["receiver"] = str(self.receiver)
         return parameters
 
 
@@ -130,7 +169,7 @@ class Unicast(PathLookup, BaseModel):
     startingPoint: Union[IPv4Interface, str]
     destinationPoint: Union[IPv4Interface, str]
 
-    @validator('startingPoint', 'destinationPoint')
+    @validator("startingPoint", "destinationPoint")
     def _valid_ip(cls, v):
         if not isinstance(v, IPv4Interface):
             raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
@@ -138,12 +177,14 @@ class Unicast(PathLookup, BaseModel):
 
     def parameters(self, version: str):
         parameters = self.base_parameters(version)
-        parameters.update(dict(
-            pathLookupType="unicast",
-            networkMode=self._check_subnets(),
-            startingPoint=self.startingPoint.with_prefixlen,
-            destinationPoint=self.destinationPoint.with_prefixlen
-        ))
+        parameters.update(
+            dict(
+                pathLookupType="unicast",
+                networkMode=self._check_subnets(),
+                startingPoint=self.startingPoint.with_prefixlen,
+                destinationPoint=self.destinationPoint.with_prefixlen,
+            )
+        )
         return parameters
 
     def _check_subnets(self) -> bool:
@@ -160,7 +201,7 @@ class Host2GW(BaseModel):
     startingPoint: Union[IPv4Address, str]
     vrf: Optional[str] = None
 
-    @validator('startingPoint')
+    @validator("startingPoint")
     def _valid_ip(cls, v):
         if v and not isinstance(v, IPv4Address):
             raise ValueError(f'IP "{v}" not a valid IP Address')
@@ -171,10 +212,10 @@ class Host2GW(BaseModel):
             pathLookupType="hostToDefaultGW",
             type="pathLookup",
             groupBy="siteName",
-            startingPoint=str(self.startingPoint)
+            startingPoint=str(self.startingPoint),
         )
         if self.vrf:
-            parameters['vrf'] = self.vrf
+            parameters["vrf"] = self.vrf
         return parameters
 
 
@@ -182,18 +223,14 @@ class Network(BaseModel):
     sites: Optional[Union[str, List[str]]] = [ALL_NETWORK]
     all_network: Optional[bool] = Field(False, description="Show all sites as clouds, UI option 'All Network'")
 
-    @validator('paths')
+    @validator("paths")
     def _format_paths(cls, v):
         if isinstance(v, str):
             return [v]
         return v
 
     def parameters(self, version: str):
-        parameters = dict(
-            type="topology",
-            groupBy="siteName",
-            paths=self.sites.copy()
-        )
-        if self.all_network and ALL_NETWORK not in parameters['paths']:
-            parameters['paths'].append(ALL_NETWORK)
+        parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
+        if self.all_network and ALL_NETWORK not in parameters["paths"]:
+            parameters["paths"].append(ALL_NETWORK)
         return parameters
