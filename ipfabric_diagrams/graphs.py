@@ -20,9 +20,9 @@ class IPFPath(IPFabricAPI):
         url = image or "/"
         payload = dict(parameters=parameters, snapshot=snapshot_id or self.snapshot_id)
         if overlay:
-            if overlay.type == 'compare' and overlay.snapshotToCompare not in self.snapshots:
+            if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
                 raise ValueError(f"Snapshot {overlay.snapshotToCompare} not found in IP Fabric.")
-            payload['overlay'] = overlay
+            payload["overlay"] = overlay.overlay(self.os_version)
         res = self.post(url, json=payload)
         res.raise_for_status()
         return res.content if image else res.json()
