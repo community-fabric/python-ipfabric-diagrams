@@ -1,4 +1,4 @@
-from .parameters import ICMP
+from .graph_parameters import ICMP
 
 
 ECHO_REPLY = ICMP(type=0, code=0)

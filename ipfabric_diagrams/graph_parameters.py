@@ -17,7 +17,7 @@ class ICMP(BaseModel):
 class Overlay(BaseModel):
     type: str
     snapshotToCompare: Optional[Union[UUID, str]] = Field(None, description="Snapshot to compare if type is compare.")
-    intentRuleId: Optional[int, str] = Field(
+    intentRuleId: Optional[Union[int, str]] = Field(
         None,
         description="Intent Rule ID if type is intent. Also valid: ['nonRedundantEdges', 'singlePointsOfFailure']",
     )
@@ -223,7 +223,7 @@ class Network(BaseModel):
     sites: Optional[Union[str, List[str]]] = [ALL_NETWORK]
     all_network: Optional[bool] = Field(False, description="Show all sites as clouds, UI option 'All Network'")
 
-    @validator("paths")
+    @validator("sites")
     def _format_paths(cls, v):
         if isinstance(v, str):
             return [v]

@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 from ipfabric.api import IPFabricAPI
 
-from ipfabric_diagrams.parameters import Unicast, Multicast, Host2GW, Network, Overlay
+from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Network, Overlay
 
 
 class IPFPath(IPFabricAPI):
