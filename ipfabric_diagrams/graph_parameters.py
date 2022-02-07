@@ -83,7 +83,7 @@ class PathLookup(BaseModel):
     protocol: Optional[str] = "tcp"
     srcPorts: Optional[Union[str, int]] = "1024-65535"
     dstPorts: Optional[Union[str, int]] = "80,443"
-    tcpFlags: Optional[list] = None
+    tcpFlags: Optional[list] = Field(default_factory=list)
     icmp: Optional[ICMP] = ICMP(type=0, code=0)
     ttl: Optional[int] = 128
     fragmentOffset: Optional[int] = 0
@@ -136,7 +136,7 @@ class PathLookup(BaseModel):
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
             otherOptions=vars(self.otherOptions),
-            firstHopAlgorithm=vars(self.firstHopAlgorithm),
+            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(),
         )
 
 

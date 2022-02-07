@@ -1,16 +1,16 @@
 from typing import Union
-from urllib.parse import urljoin
 
 from ipfabric.api import IPFabricAPI
 
 from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Network, Overlay
 from ipfabric_diagrams.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings
 
+GRAPHS_URL = "graphs/"
+
 
 class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.base_url = urljoin(str(self.base_url), "/graphs")
 
     def _query(
         self,
@@ -25,7 +25,7 @@ class IPFDiagram(IPFabricAPI):
         :param parameters: dict: Dictionary to submit in POST.
         :return: list: List of Dictionary objects.
         """
-        url = image or "/"
+        url = GRAPHS_URL + image if image else GRAPHS_URL
         payload = dict(parameters=parameters, snapshot=snapshot_id or self.snapshot_id)
         if overlay:
             if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
@@ -37,7 +37,7 @@ class IPFDiagram(IPFabricAPI):
         res.raise_for_status()
         return res.content if image else res.json()
 
-    def json(
+    def diagram_json(
         self,
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
@@ -51,7 +51,7 @@ class IPFDiagram(IPFabricAPI):
             graph_settings=graph_settings,
         )
 
-    def svg(
+    def diagram_svg(
         self,
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
@@ -66,7 +66,7 @@ class IPFDiagram(IPFabricAPI):
             graph_settings=graph_settings,
         )
 
-    def png(
+    def diagram_png(
         self,
         parameters: Union[Unicast, Multicast, Host2GW, Network],
         snapshot_id: str = None,
