@@ -1,7 +1,6 @@
 import re
 from ipaddress import IPv4Interface, IPv4Address
 from typing import Optional, Union, List
-from uuid import UUID
 
 from pydantic import BaseModel, validator, Field
 
@@ -12,43 +11,6 @@ ALL_NETWORK = "$main"
 class ICMP(BaseModel):
     type: int
     code: int
-
-
-class Overlay(BaseModel):
-    type: str
-    snapshotToCompare: Optional[Union[UUID, str]] = Field(None, description="Snapshot to compare if type is compare.")
-    intentRuleId: Optional[Union[int, str]] = Field(
-        None,
-        description="Intent Rule ID if type is intent. Also valid: ['nonRedundantEdges', 'singlePointsOfFailure']",
-    )
-
-    @validator("type")
-    def _valid_types(cls, v):
-        if v not in ["compare", "intent"]:
-            raise ValueError(f'Type "{v}" not in ["compare", "intent"]')
-        return v
-
-    @validator("snapshotToCompare")
-    def _valid_snapshot(cls, v):
-        if v and v in ["$last", "$prev", "$lastLocked"]:
-            return v
-        elif v and isinstance(v, UUID):
-            return str(v)
-        raise ValueError(f'"{v}" is not a Snapshot ID or in ["$last", "$prev", "$lastLocked"]')
-
-    @validator("intentRuleId")
-    def _valid_intentrule(cls, v):
-        if v and (isinstance(v, int) or v in ["nonRedundantEdges", "singlePointsOfFailure"]):
-            return str(v)
-        raise ValueError(f'"{v}" is not an Intent Rule ID or in ["nonRedundantEdges", "singlePointsOfFailure"]')
-
-    def overlay(self, version: str) -> dict:
-        overlay = dict(type=self.type)
-        if self.type == "intent":
-            overlay["intentRuleId"] = self.intentRuleId
-        else:
-            overlay["snapshotToCompare"] = self.snapshotToCompare
-        return overlay
 
 
 class Options(BaseModel):

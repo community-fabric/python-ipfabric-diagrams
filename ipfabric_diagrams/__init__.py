@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .graph_parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm, Overlay
-from .graph_settings import NetworkSettings, PathLookupSettings
+from .graph_parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm
+from .graph_settings import NetworkSettings, PathLookupSettings, Overlay
 from .graphs import IPFDiagram
 
 __all__ = [

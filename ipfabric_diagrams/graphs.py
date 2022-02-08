@@ -2,8 +2,8 @@ from typing import Union
 
 from ipfabric.api import IPFabricAPI
 
-from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Network, Overlay
-from ipfabric_diagrams.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings
+from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Network
+from ipfabric_diagrams.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay
 
 GRAPHS_URL = "graphs/"
 
@@ -43,7 +43,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-    ):
+    ) -> dict:
         return self._query(
             parameters.parameters(self.os_version),
             snapshot_id=snapshot_id,
@@ -57,7 +57,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-    ):
+    ) -> bytes:
         return self._query(
             parameters.parameters(self.os_version),
             snapshot_id=snapshot_id,
@@ -72,7 +72,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-    ):
+    ) -> bytes:
         return self._query(
             parameters.parameters(self.os_version),
             snapshot_id=snapshot_id,

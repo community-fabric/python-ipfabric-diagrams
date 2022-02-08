@@ -316,11 +316,11 @@ python-versions = "*"
 
 [[package]]
 name = "ipfabric"
-version = "0.7.18"
+version = "0.8.0"
 description = "Python package for interacting with IP Fabric"
 category = "main"
 optional = false
-python-versions = ">=3.6.2,<4.0.0"
+python-versions = ">=3.7.1,<4.0.0"
 
 [package.dependencies]
 httpx = ">=0.21.1,<0.22.0"
@@ -845,8 +845,8 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.7"
-content-hash = "3cee4c26cb824139251fef0feda9069c37bc5487fd4c211e4ccda11de6a95b55"
+python-versions = "^3.7.1"
+content-hash = "edb3cd5a3d89482e731433a8c9ef30c2db62814b630a2d1c807094ddf29dc858"
 
 [metadata.files]
 anyio = [
@@ -1055,8 +1055,8 @@ invoke = [
     {file = "invoke-1.6.0.tar.gz", hash = "sha256:374d1e2ecf78981da94bfaf95366216aaec27c2d6a7b7d5818d92da55aa258d3"},
 ]
 ipfabric = [
-    {file = "ipfabric-0.7.18-py3-none-any.whl", hash = "sha256:e466e0702f00d29cf60f662c2fbc3c649c29afc1c114d3dfe73f09d8146d632e"},
-    {file = "ipfabric-0.7.18.tar.gz", hash = "sha256:2a9ee9a0b4c85729ce1294d64a36a3072e737f31b5a1ed829af91593e25730d2"},
+    {file = "ipfabric-0.8.0-py3-none-any.whl", hash = "sha256:5396679ad2ece3845664350049ce270f4b0c795d580d5c8271c864f7c3bd0bdf"},
+    {file = "ipfabric-0.8.0.tar.gz", hash = "sha256:c0cbe954510c388166b0300c6b090433fab81ea2e164e001b44cf50a3c1ee186"},
 ]
 jeepney = [
     {file = "jeepney-0.7.1-py3-none-any.whl", hash = "sha256:1b5a0ea5c0e7b166b2f5895b91a08c14de8915afda4407fb5022a195224958ac"},

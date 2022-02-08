@@ -1,7 +1,7 @@
 import importlib.resources
 import json
 from typing import Optional, List, Union
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, validator, Field
 from pydantic.color import Color
@@ -145,3 +145,36 @@ class PathLookupSettings(GraphSettings):
     def __init__(self):
         edges = [EdgeSettings(**edge) for edge in DEFAULT_PATHLOOKUP]
         super().__init__(edges=edges)
+
+
+class Overlay(BaseModel):
+    """Set snapshotToCompare or intentRuleId, not both."""
+    snapshotToCompare: Optional[Union[UUID, str]] = Field(None, description="Snapshot ID to compare.")
+    intentRuleId: Optional[Union[int, str]] = Field(
+        None,
+        description="Intent Rule ID to overlay. Also valid: ['nonRedundantEdges', 'singlePointsOfFailure']",
+    )
+
+    @validator("snapshotToCompare")
+    def _valid_snapshot(cls, v):
+        if v and v in ["$last", "$prev", "$lastLocked"]:
+            return v
+        elif v and isinstance(v, UUID):
+            return str(v)
+        raise ValueError(f'"{v}" is not a Snapshot ID or in ["$last", "$prev", "$lastLocked"]')
+
+    @validator("intentRuleId")
+    def _valid_intentrule(cls, v):
+        if v and (isinstance(v, int) or v in ["nonRedundantEdges", "singlePointsOfFailure"]):
+            return str(v)
+        raise ValueError(f'"{v}" is not an Intent Rule ID or in ["nonRedundantEdges", "singlePointsOfFailure"]')
+
+    @property
+    def type(self):
+        return "compare" if self.snapshotToCompare else "intent"
+
+    def overlay(self, version: str) -> dict:
+        if self.snapshotToCompare:
+            return dict(type=self.type, snapshotToCompare=self.snapshotToCompare)
+        else:
+            return dict(type=self.type, intentRuleId=self.intentRuleId)

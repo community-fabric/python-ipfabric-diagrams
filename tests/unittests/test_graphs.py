@@ -1,48 +1,55 @@
-import ipaddress
 import unittest
 from unittest.mock import patch
 
-from ipfabric_diagrams.graphs import IPFPath
+from ipfabric_diagrams.graph_parameters import Network
+from ipfabric_diagrams.graph_settings import NetworkSettings, Overlay
+from ipfabric_diagrams.graphs import IPFDiagram
 
 
-@unittest.skipIf(True, "skipping tests")
 class Models(unittest.TestCase):
-    @patch('ipfabric.api.IPFabricAPI')
+    @patch('ipfabric_diagrams.graphs.IPFabricAPI.__init__', return_value=None)
     def setUp(self, mock_ipf) -> None:
-        self.graph = IPFPath()
+        self.graph = IPFDiagram()
+        self.graph.snapshots = {'$last': None, '$prev': None}
+        self.graph._snapshot_id = '$last'
+        self.graph.os_version = 'v4.3.0'
 
-    def test_style(self):
-        self.graph.style = 'png'
-        self.assertEqual(self.graph.style, 'png')
+    @patch('ipfabric_diagrams.graphs.IPFDiagram._query')
+    def test_diagram_json(self, mock_query):
+        mock_query.return_value = {'data': None}
+        test = self.graph.diagram_json(Network())
+        self.assertEqual(test, {'data': None})
 
-    def test_invalid_style(self):
+    @patch('ipfabric_diagrams.graphs.IPFDiagram._query')
+    def test_diagram_svg(self, mock_query):
+        mock_query.return_value = b'test'
+        test = self.graph.diagram_svg(Network())
+        self.assertEqual(test, b'test')
+
+    @patch('ipfabric_diagrams.graphs.IPFDiagram._query')
+    def test_diagram_png(self, mock_query):
+        mock_query.return_value = b'test'
+        test = self.graph.diagram_png(Network())
+        self.assertEqual(test, b'test')
+
+    @patch('ipfabric_diagrams.graphs.IPFabricAPI.post')
+    def test_query(self, mock_post):
+        mock_post().json.return_value = {'data': None}
+        test = self.graph._query({})
+        self.assertEqual(test, {'data': None})
+
+    @patch('ipfabric_diagrams.graphs.IPFabricAPI.post')
+    def test_query_settings(self, mock_post):
+        mock_post().json.return_value = {'data': None}
+        test = self.graph._query({}, graph_settings=NetworkSettings())
+        self.assertEqual(test, {'data': None})
+
+    @patch('ipfabric_diagrams.graphs.IPFabricAPI.post')
+    def test_query_overlay(self, mock_post):
+        mock_post().json.return_value = {'data': None}
+        test = self.graph._query({}, overlay=Overlay(snapshotToCompare='$last'))
+        self.assertEqual(test, {'data': None})
+
+    def test_query_overlay_invalid(self):
         with self.assertRaises(ValueError) as err:
-            self.graph.style = 'bad'
-
-    def test_query(self):
-        self.graph.post().json.return_value = dict(test="hello")
-        self.graph.post().content = b'Hello'
-        self.assertEqual(self.graph._query({}), dict(test="hello"))
-        self.graph.style = 'png'
-        self.assertEqual(self.graph._query({}), b'Hello')
-        self.graph.style = 'svg'
-        self.assertEqual(self.graph._query({}), b'Hello')
-
-    @patch('ipfabric_diagrams.graphs.IPFPath._query')
-    def test_site(self, query):
-        query.return_value = True
-        self.assertTrue(self.graph.site('ip', overlay=dict(test=1)))
-
-    @patch('ipfabric_diagrams.graphs.IPFPath.check_subnets')
-    @patch('ipfabric_diagrams.graphs.IPFPath._query')
-    def test_host_to_gw(self, query, subnets):
-        query.return_value = True
-        self.assertTrue(self.graph.host_to_gw('ip'))
-
-    def test_check_subnets(self):
-        self.assertTrue(self.graph.check_subnets('10.0.0.0/24'))
-        self.assertFalse(self.graph.check_subnets('10.0.0.1'))
-
-    def test_check_subnets_failed(self):
-        with self.assertRaises(ipaddress.AddressValueError) as err:
-            self.graph.check_subnets('bad ip')
+            self.graph._query({}, overlay=Overlay(snapshotToCompare='$lastLocked'))
