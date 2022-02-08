@@ -20,3 +20,5 @@ if __name__ == '__main__':
     svg_data = ipf.diagram_svg(net, graph_settings=settings)
     with open('network.svg', 'wb') as f:
         f.write(svg_data)
+
+    ipf.close()

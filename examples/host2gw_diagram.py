@@ -16,3 +16,5 @@ if __name__ == '__main__':
     svg_data = ipf.diagram_svg(h2g)
     with open('host2gw.svg', 'wb') as f:
         f.write(svg_data)
+
+    ipf.close()

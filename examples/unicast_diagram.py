@@ -45,3 +45,5 @@ if __name__ == '__main__':
     png_data = ipf.diagram_png(uni)
     with open('unicast-entry.png', 'wb') as f:
         f.write(png_data)
+
+    ipf.close()
