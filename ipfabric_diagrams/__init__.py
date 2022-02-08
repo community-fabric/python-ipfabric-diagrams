@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .graph_parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm
+from .graph_parameters import Unicast, Multicast, Host2GW, Network, Options, Algorithm, EntryPoint, Options
 from .graph_settings import NetworkSettings, PathLookupSettings, Overlay
 from .graphs import IPFDiagram
 
@@ -38,6 +38,8 @@ __all__ = [
     "icmp",
     "NetworkSettings",
     "PathLookupSettings",
+    "EntryPoint",
+    "Options"
 ]
 
 __version__ = "1.0.5"

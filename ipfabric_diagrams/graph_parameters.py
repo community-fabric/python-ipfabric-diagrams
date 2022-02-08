@@ -21,6 +21,7 @@ class Options(BaseModel):
 class EntryPoint(BaseModel):
     sn: str
     iface: str
+    hostname: str
 
 
 class Algorithm(BaseModel):

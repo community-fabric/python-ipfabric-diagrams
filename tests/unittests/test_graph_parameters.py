@@ -13,7 +13,7 @@ class GraphParam(unittest.TestCase):
         self.assertIsInstance(NEED_AUTHORIZATION, ICMP)
 
     def test_entry_point(self):
-        ep = EntryPoint(sn="SERIAL", iface="eth0")
+        ep = EntryPoint(sn="SERIAL", iface="eth0", hostname="test")
         self.assertIsInstance(ep, EntryPoint)
 
     def test_algorithm(self):
@@ -22,7 +22,7 @@ class GraphParam(unittest.TestCase):
         self.assertEqual(param, {"type": "automatic", "vrf": "mgmt"})
 
     def test_algorithm_entry(self):
-        alg = Algorithm(entryPoints=[EntryPoint(sn="SERIAL", iface="eth0")])
+        alg = Algorithm(entryPoints=[EntryPoint(sn="SERIAL", iface="eth0", hostname="test")])
         param = alg.algorithm_parameters("v4.3.0")
         self.assertEqual(param, {"type": "userDefined", "entryPoints": [{"sn": "SERIAL", "iface": "eth0"}]})
 

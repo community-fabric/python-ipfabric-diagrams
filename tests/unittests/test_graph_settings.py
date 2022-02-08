@@ -36,7 +36,8 @@ class GraphSettingTest(unittest.TestCase):
                                                             'type': 'edge', 'labels': ['protocols']}]})
 
     def test_pathlookup(self):
-        self.assertEqual(vars(PathLookup()), {'ignoredTopics': [], 'colorDetectedLoops': True})
+        self.assertEqual(vars(PathLookup(ignoredTopics=['ACL'])),
+                         {'ignoredTopics': ['ACL'], 'colorDetectedLoops': True})
 
     def test_pathlookup_failed(self):
         with self.assertRaises(ValueError) as err:
