@@ -102,7 +102,7 @@ class GraphSettings(BaseModel):
             if isinstance(edge, GroupSettings):
                 for child in edge.children:
                     if child.name == protocol_name:
-                        setattr(edge, proto_attr, value)
+                        setattr(child, proto_attr, value)
                         edge.grouped = False
                         return True
         return False
@@ -128,14 +128,14 @@ class NetworkSettings(GraphSettings):
 
     def hide_group(self, group_name: str, unhide: bool = False):
         for edge in self.edges:
-            if isinstance(edge, GroupSettings) and edge.name == group_name.lower():
+            if isinstance(edge, GroupSettings) and edge.name.lower() == group_name.lower():
                 edge.visible = unhide
                 return True
         return False
 
     def ungroup_group(self, group_name: str, group: bool = False):
         for edge in self.edges:
-            if isinstance(edge, GroupSettings) and edge.name == group_name.lower():
+            if isinstance(edge, GroupSettings) and edge.name.lower() == group_name.lower():
                 edge.grouped = group
                 return True
         return False
@@ -165,9 +165,13 @@ class Overlay(BaseModel):
 
     @validator("intentRuleId")
     def _valid_intentrule(cls, v):
-        if v and (isinstance(v, int) or v in ["nonRedundantEdges", "singlePointsOfFailure"]):
+        if v and v in ["nonRedundantEdges", "singlePointsOfFailure"]:
+            return v
+        try:
+            int(v)
             return str(v)
-        raise ValueError(f'"{v}" is not an Intent Rule ID or in ["nonRedundantEdges", "singlePointsOfFailure"]')
+        except ValueError:
+            raise ValueError(f'"{v}" is not an Intent Rule ID or in ["nonRedundantEdges", "singlePointsOfFailure"]')
 
     @property
     def type(self):

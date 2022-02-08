@@ -1,12 +1,16 @@
 import unittest
 
 from ipfabric_diagrams.graph_parameters import *
+from ipfabric_diagrams.icmp import *
 
 
 class GraphParam(unittest.TestCase):
     def test_icmp(self):
         icmp = ICMP(type=1, code=0)
         self.assertIsInstance(icmp, ICMP)
+
+    def test_icmp_type(self):
+        self.assertIsInstance(NEED_AUTHORIZATION, ICMP)
 
     def test_entry_point(self):
         ep = EntryPoint(sn='SERIAL', iface='eth0')
