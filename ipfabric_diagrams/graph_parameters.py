@@ -25,6 +25,7 @@ class EntryPoint(BaseModel):
 
 class Algorithm(BaseModel):
     """Default is automatic. Adding entryPoints will change to userDefined"""
+
     vrf: Optional[str] = None
     entryPoints: Optional[List[EntryPoint]] = None
 
