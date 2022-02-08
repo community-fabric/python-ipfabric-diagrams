@@ -6,7 +6,7 @@ from ipfabric_diagrams.graph_settings import NetworkSettings, Overlay
 from ipfabric_diagrams.graphs import IPFDiagram
 
 
-class Models(unittest.TestCase):
+class Graph(unittest.TestCase):
     @patch('ipfabric_diagrams.graphs.IPFabricAPI.__init__', return_value=None)
     def setUp(self, mock_ipf) -> None:
         self.graph = IPFDiagram()

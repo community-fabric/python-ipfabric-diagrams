@@ -24,21 +24,19 @@ class EntryPoint(BaseModel):
 
 
 class Algorithm(BaseModel):
-    type: str = "automatic"
+    """Default is automatic. Adding entryPoints will change to userDefined"""
     vrf: Optional[str] = None
     entryPoints: Optional[List[EntryPoint]] = None
 
-    @validator("type")
-    def _valid_types(cls, v):
-        if v not in ["automatic", "userDefined"]:
-            raise ValueError(f'Type "{v}" not in ["automatic", "userDefined"]')
-        return v
+    @property
+    def type(self):
+        return "userDefined" if self.entryPoints else "automatic"
 
-    def algorithm_parameters(self):
-        if self.type == "automatic":
-            return dict(type=self.type, vrf=self.vrf) if self.vrf else dict(type=self.type)
-        else:
+    def algorithm_parameters(self, version: str) -> dict:
+        if self.entryPoints:
             return dict(type=self.type, entryPoints=[vars(e) for e in self.entryPoints])
+        else:
+            return dict(type=self.type, vrf=self.vrf) if self.vrf else dict(type=self.type)
 
 
 class PathLookup(BaseModel):
@@ -98,7 +96,7 @@ class PathLookup(BaseModel):
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
             otherOptions=vars(self.otherOptions),
-            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(),
+            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(version),
         )
 
 
