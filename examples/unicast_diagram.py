@@ -39,6 +39,7 @@ if __name__ == '__main__':
         ]),
         otherOptions=OtherOptions(applications="(dns)")
     )
+    model_data = ipf.diagram_model(uni)
     png_data = ipf.diagram_png(uni)
     with open('unicast-entry.png', 'wb') as f:
         f.write(png_data)

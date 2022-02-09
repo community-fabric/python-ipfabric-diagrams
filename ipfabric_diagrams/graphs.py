@@ -5,7 +5,7 @@ from ipfabric.api import IPFabricAPI
 from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
 from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay, \
     GroupSettings
-from ipfabric_diagrams.output_models.graph_result import Edge, Node
+from ipfabric_diagrams.output_models.graph_result import NetworkEdge, Node, PathLookupEdge
 
 GRAPHS_URL = "graphs/"
 
@@ -91,25 +91,19 @@ class IPFDiagram(IPFabricAPI):
             graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
+        edge_setting_dict = self._diagram_edge_settings(json_data['graphResult']['settings'])
         if isinstance(parameters, Network):
-            return self._diagram_network(json_data)
+            return self._diagram_network(json_data, edge_setting_dict)
+        else:
+            return self._diagram_pathlookup(json_data, edge_setting_dict)
 
-    @staticmethod
-    def _diagram_network(json_data: dict) -> (dict, dict):
-        net_settings = GraphSettings(**json_data['graphResult']['settings'])
-        edge_type = dict()
-        for edge in net_settings.edges:
-            edge_type[edge.id] = edge
-            if isinstance(edge, GroupSettings):
-                for child in edge.children:
-                    edge_type[child.id] = child
-
+    def _diagram_network(self, json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> (dict, dict):
         edges, nodes = dict(), dict()
         for node_id, node in json_data['graphResult']['graphData']['nodes'].items():
             nodes[node_id] = Node(**node)
         for edge_id, edge_json in json_data['graphResult']['graphData']['edges'].items():
-            edge = Edge(**edge_json)
-            edge.edgeSettings = edge_type[edge.edgeSettingsId]
+            edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
+            edge.edgeSettings = edge_setting_dict[edge.edgeSettingsId]
             if edge.source:
                 edge.source = nodes[edge.source]
             if edge.target:
@@ -117,3 +111,25 @@ class IPFDiagram(IPFabricAPI):
             edges[edge_id] = edge
 
         return edges, nodes
+
+    def _diagram_pathlookup(self, json_data: dict, edge_setting_dict: dict) -> (dict, dict):
+        edges, nodes = self._diagram_network(json_data, edge_setting_dict, pathlookup=True)
+
+        for edge_id, edge in edges.items():
+            for prev_id in edge.prevEdgeIds:
+                edge.prevEdge.append(edges[prev_id])
+            for next_id in edge.nextEdgeIds:
+                edge.nextEdge.append(edges[next_id] if next_id in edges else next_id)
+
+        return edges, nodes
+
+    @staticmethod
+    def _diagram_edge_settings(graph_settings: dict) -> dict:
+        net_settings = GraphSettings(**graph_settings)
+        edge_setting_dict = dict()
+        for edge in net_settings.edges:
+            edge_setting_dict[edge.id] = edge
+            if isinstance(edge, GroupSettings):
+                for child in edge.children:
+                    edge_setting_dict[child.id] = child
+        return edge_setting_dict
