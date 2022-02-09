@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .graph_parameters import Unicast, Multicast, Host2GW, Network, OtherOptions, Algorithm, EntryPoint, OtherOptions
-from .graph_settings import NetworkSettings, PathLookupSettings, Overlay
+from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network, OtherOptions, Algorithm, EntryPoint
+from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, Overlay
 from .graphs import IPFDiagram
 
 __all__ = [
@@ -38,8 +38,7 @@ __all__ = [
     "icmp",
     "NetworkSettings",
     "PathLookupSettings",
-    "EntryPoint",
-    "OtherOptions"
+    "EntryPoint"
 ]
 
 __version__ = "1.0.5"

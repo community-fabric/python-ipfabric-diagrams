@@ -1,7 +1,7 @@
 import unittest
 
-from ipfabric_diagrams.graph_parameters import *
 from ipfabric_diagrams.icmp import *
+from ipfabric_diagrams.input_models.graph_parameters import *
 
 
 class GraphParam(unittest.TestCase):
@@ -24,7 +24,7 @@ class GraphParam(unittest.TestCase):
     def test_algorithm_entry(self):
         alg = Algorithm(entryPoints=[EntryPoint(sn="SERIAL", iface="eth0", hostname="test")])
         param = alg.algorithm_parameters("v4.3.0")
-        self.assertEqual(param, {"type": "userDefined", "entryPoints": [{"sn": "SERIAL", "iface": "eth0"}]})
+        self.assertEqual(param, {"type": "userDefined", "entryPoints": [{"sn": "SERIAL", "iface": "eth0", "hostname": "test"}]})
 
     def test_pathlookup(self):
         bp = PathLookup(protocol="tcp", tcpFlags=["syn"], dstPorts="80,443").base_parameters("v4.3")

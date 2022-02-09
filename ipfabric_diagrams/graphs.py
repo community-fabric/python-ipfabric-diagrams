@@ -2,8 +2,8 @@ from typing import Union
 
 from ipfabric.api import IPFabricAPI
 
-from ipfabric_diagrams.graph_parameters import Unicast, Multicast, Host2GW, Network
-from ipfabric_diagrams.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay
+from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
+from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay
 
 GRAPHS_URL = "graphs/"
 

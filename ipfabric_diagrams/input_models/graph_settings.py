@@ -1,20 +1,10 @@
-import importlib.resources
-import json
 from typing import Optional, List, Union
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, validator, Field
 from pydantic.color import Color
 
-VALID_DEV_TYPES = ["aciLeaf", "aciSpine", "ap", "cloudInstance", "cloudTransitHub", "cloudInternetGw", "cloudNatGw",
-                   "cloudRouter", "cloudVpnGw", "fex", "fw", "host", "l3switch", "lb", "nx7000", "phone", "router",
-                   "securityManagement", "switch", "unknown", "vgw", "waas", "wlc"]
-DEFAULT_NETWORK = json.loads(
-    importlib.resources.read_text("ipfabric_diagrams.factory_defaults", "networkSettings.json")
-)
-DEFAULT_PATHLOOKUP = json.loads(
-    importlib.resources.read_text("ipfabric_diagrams.factory_defaults", "pathLookupSettings.json")
-)
+from ipfabric_diagrams.input_models.constants import VALID_DEV_TYPES, DEFAULT_NETWORK, DEFAULT_PATHLOOKUP
 
 
 class Style(BaseModel):

@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
 
-from ipfabric_diagrams.graph_parameters import Network
-from ipfabric_diagrams.graph_settings import NetworkSettings, Overlay
 from ipfabric_diagrams.graphs import IPFDiagram
+from ipfabric_diagrams.input_models.graph_parameters import Network
+from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, Overlay
 
 
 class Graph(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 
-from ipfabric_diagrams.graph_settings import *
+from ipfabric_diagrams.input_models.graph_settings import *
 
 
 class GraphSettingTest(unittest.TestCase):
