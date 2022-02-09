@@ -58,35 +58,44 @@ class GraphSettingTest(unittest.TestCase):
             GraphSettings(edges=[EdgeSettings(name='Test', style=Style(color='red'), type='edge')],
                           hiddenDeviceTypes=['bad'])
 
-    def test_graph_settings_hide(self):
-        g = GraphSettings(edges=[EdgeSettings(name='test', style=Style(color='red'), type='edge')])
-        g.hide_protocol('test')
-        self.assertFalse(g.settings('v4.3')['edges'][0]['visible'])
-
-    def test_graph_settings_ungroup(self):
-        group = GroupSettings(name='group', style=Style(color='red'), type='group', label='Label',
-                              children=[EdgeSettings(name='test', style=Style(color='red'), type='edge')])
-        g = GraphSettings(edges=[group])
-        g.ungroup_protocol('test')
-        g_settings = g.settings('v4.3')
-        self.assertFalse(g_settings['edges'][0]['grouped'])
-        self.assertFalse(g_settings['edges'][0]['children'][0]['grouped'])
-
-    def test_network_settings_hide(self):
+    def test_network_settings_hide_protocol(self):
         n = NetworkSettings()
-        n.hide_group('Layer 1')
-        self.assertFalse(n.settings('v4.3')['edges'][0]['visible'])
+        is_true = n.hide_protocol('xdp')
+        self.assertFalse(n.settings('v4.3')['edges'][0]['children'][0]['visible'])
+        self.assertTrue(is_true)
 
-    def test_network_settings_ungroup(self):
+    def test_network_settings_hide_protocol_failed(self):
         n = NetworkSettings()
-        n.ungroup_group('Layer 1')
+        with self.assertRaises(KeyError) as err:
+           n.hide_protocol('bad_proto')
+
+    def test_network_settings_ungroup_protocol(self):
+        n = NetworkSettings()
+        is_true = n.ungroup_protocol('xdp')
         n_settings = n.settings('v4.3')
         self.assertFalse(n_settings['edges'][0]['grouped'])
+        self.assertFalse(n_settings['edges'][0]['children'][0]['grouped'])
+        self.assertTrue(is_true)
+
+    def test_network_settings_hide_group(self):
+        n = NetworkSettings()
+        is_true = n.hide_group('Layer 1')
+        self.assertFalse(n.settings('v4.3')['edges'][0]['visible'])
+        self.assertTrue(is_true)
+
+    def test_network_settings_ungroup_group(self):
+        n = NetworkSettings()
+        is_true = n.ungroup_group('Layer 1')
+        n_settings = n.settings('v4.3')
+        self.assertFalse(n_settings['edges'][0]['grouped'])
+        self.assertTrue(is_true)
 
     def test_network_settings_failed(self):
         n = NetworkSettings()
-        self.assertFalse(n.hide_group('Layer 7'))
-        self.assertFalse(n.ungroup_group('Layer 7'))
+        with self.assertRaises(KeyError) as err:
+            n.hide_group('Layer 7')
+        with self.assertRaises(KeyError) as err:
+            n.ungroup_group('Layer 7')
 
     def test_pathlookup_settings(self):
         self.assertIsInstance(PathLookupSettings(), PathLookupSettings)

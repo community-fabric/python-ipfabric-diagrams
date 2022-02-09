@@ -4,7 +4,8 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, validator, Field
 from pydantic.color import Color
 
-from ipfabric_diagrams.input_models.constants import VALID_DEV_TYPES, DEFAULT_NETWORK, DEFAULT_PATHLOOKUP
+from ipfabric_diagrams.input_models.constants import VALID_DEV_TYPES, DEFAULT_NETWORK, DEFAULT_PATHLOOKUP, \
+    VALID_NET_PROTOCOLS
 
 
 class Style(BaseModel):
@@ -19,9 +20,11 @@ class Style(BaseModel):
         return v.lower()
 
     def style_settings(self, version: str) -> dict:
-        settings = vars(self)
-        settings['color'] = self.color.as_hex()
-        return settings
+        return dict(
+            color=self.color.as_hex(),
+            pattern=self.pattern,
+            thicknessThresholds=self.thicknessThresholds
+        )
 
 
 class Setting(BaseModel):
@@ -32,13 +35,18 @@ class Setting(BaseModel):
     type: str
 
     def base_settings(self, version: str) -> dict:
-        settings = vars(self)
-        settings['style'] = self.style.style_settings(version)
-        return settings
+        return dict(
+            name=self.name,
+            visible=self.visible,
+            grouped=self.grouped,
+            style=self.style.style_settings(version),
+            type=self.type
+        )
 
 
 class EdgeSettings(Setting, BaseModel):
     labels: List[str] = ['protocols']
+    id: Optional[UUID] = None
 
     def settings(self, version: str) -> dict:
         base_settings = self.base_settings(version)
@@ -50,6 +58,7 @@ class EdgeSettings(Setting, BaseModel):
 class GroupSettings(Setting, BaseModel):
     label: str
     children: List[EdgeSettings]
+    id: Optional[UUID] = None
 
     def settings(self, version: str) -> dict:
         base_settings = self.base_settings(version)
@@ -84,25 +93,6 @@ class GraphSettings(BaseModel):
             raise ValueError(f"Device Types '{v}' must be None or in {VALID_DEV_TYPES}.")
         return v
 
-    def _update_protocol(self, protocol_name: str, proto_attr: str, value: bool = False):
-        for edge in self.edges:
-            if isinstance(edge, EdgeSettings) and edge.name == protocol_name:
-                setattr(edge, proto_attr, value)
-                return True
-            if isinstance(edge, GroupSettings):
-                for child in edge.children:
-                    if child.name == protocol_name:
-                        setattr(child, proto_attr, value)
-                        edge.grouped = False
-                        return True
-        return False
-
-    def hide_protocol(self, protocol_name: str, unhide: bool = False):
-        return self._update_protocol(protocol_name.lower(), 'visible', unhide)
-
-    def ungroup_protocol(self, protocol_name: str, grouped: bool = False):
-        return self._update_protocol(protocol_name.lower(), 'grouped', grouped)
-
     def settings(self, version: str) -> dict:
         return dict(
             edges=[edge.settings(version) for edge in self.edges],
@@ -116,19 +106,52 @@ class NetworkSettings(GraphSettings):
         edges = [GroupSettings(**edge) for edge in DEFAULT_NETWORK]
         super().__init__(edges=edges, hiddenDeviceTypes=['ap', 'fex', 'host', 'phone'])
 
-    def hide_group(self, group_name: str, unhide: bool = False):
-        for edge in self.edges:
-            if isinstance(edge, GroupSettings) and edge.name.lower() == group_name.lower():
-                edge.visible = unhide
+    @staticmethod
+    def _update_edge(children: List[EdgeSettings], name: str, attribute: str):
+        for edge in children:
+            if edge.name.lower() == name:
+                setattr(edge, attribute, False)
                 return True
         return False
 
-    def ungroup_group(self, group_name: str, group: bool = False):
+    def _update_group(self, name: str, attribute: str, group: bool = False):
         for edge in self.edges:
-            if isinstance(edge, GroupSettings) and edge.name.lower() == group_name.lower():
-                edge.grouped = group
+            if group and isinstance(edge, GroupSettings) and edge.name.lower() == name:
+                setattr(edge, attribute, False)
                 return True
+            elif not group:
+                if isinstance(edge, GroupSettings) and self._update_edge(edge.children, name, attribute):
+                    return self._update_group(edge.name.lower(), 'grouped', True)
+                elif isinstance(edge, EdgeSettings) and self._update_edge([edge], name, attribute):
+                    return True
         return False
+
+    def hide_protocol(self, protocol_name: str):
+        if protocol_name.lower() in VALID_NET_PROTOCOLS:
+            return self._update_group(protocol_name.lower(), attribute='visible', group=False)
+        else:
+            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+
+    def ungroup_protocol(self, protocol_name: str):
+        return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
+        # if protocol_name.lower() in VALID_NET_PROTOCOLS:
+        #     return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
+        # else:
+        #     raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+
+    def hide_group(self, group_name: str):
+        group_names = [g.name.lower() for g in self.edges if isinstance(g, GroupSettings)]
+        if group_name.lower() in group_names:
+            return self._update_group(group_name.lower(), attribute='visible', group=True)
+        else:
+            raise KeyError(f"Group {group_name} does not exist.  Valid groups are {group_names}")
+
+    def ungroup_group(self, group_name: str):
+        group_names = [g.name.lower() for g in self.edges if isinstance(g, GroupSettings)]
+        if group_name.lower() in group_names:
+            return self._update_group(group_name.lower(), attribute='grouped', group=True)
+        else:
+            raise KeyError(f"Group {group_name} does not exist.  Valid groups are {group_names}")
 
 
 class PathLookupSettings(GraphSettings):

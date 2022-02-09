@@ -19,13 +19,10 @@ if __name__ == '__main__':
     json_data = ipf.diagram_json(uni)
 
     settings = PathLookupSettings()
-    settings.hide_protocol('ethernet')
     png_data = ipf.diagram_png(uni, graph_settings=settings)
     with open('unicast.png', 'wb') as f:
         f.write(png_data)
 
-    settings = PathLookupSettings()
-    settings.ungroup_protocol('ip')
     svg_data = ipf.diagram_svg(uni, graph_settings=settings)
     with open('unicast.svg', 'wb') as f:
         f.write(svg_data)

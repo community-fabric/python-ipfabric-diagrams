@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network, OtherOptions, Algorithm, EntryPoint
+from ipfabric_diagrams.input_models.constants import VALID_NET_PROTOCOLS, VALID_PATH_PROTOCOLS
+from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network, OtherOptions, \
+    Algorithm, EntryPoint
 from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, Overlay
 from .graphs import IPFDiagram
 
@@ -38,7 +40,9 @@ __all__ = [
     "icmp",
     "NetworkSettings",
     "PathLookupSettings",
-    "EntryPoint"
+    "EntryPoint",
+    "VALID_NET_PROTOCOLS",
+    "VALID_PATH_PROTOCOLS"
 ]
 
 __version__ = "1.0.5"

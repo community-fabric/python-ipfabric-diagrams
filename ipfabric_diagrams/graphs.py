@@ -3,7 +3,9 @@ from typing import Union
 from ipfabric.api import IPFabricAPI
 
 from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
-from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay
+from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay, \
+    GroupSettings
+from ipfabric_diagrams.output_models.graph_result import Edge, Node
 
 GRAPHS_URL = "graphs/"
 
@@ -80,3 +82,38 @@ class IPFDiagram(IPFabricAPI):
             image="png",
             graph_settings=graph_settings,
         )
+
+    def diagram_model(
+            self,
+            parameters: Union[Unicast, Multicast, Host2GW, Network],
+            snapshot_id: str = None,
+            overlay: Overlay = None,
+            graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+    ):
+        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
+        if isinstance(parameters, Network):
+            return self._diagram_network(json_data)
+
+    @staticmethod
+    def _diagram_network(json_data: dict) -> (dict, dict):
+        net_settings = GraphSettings(**json_data['graphResult']['settings'])
+        edge_type = dict()
+        for edge in net_settings.edges:
+            edge_type[edge.id] = edge
+            if isinstance(edge, GroupSettings):
+                for child in edge.children:
+                    edge_type[child.id] = child
+
+        edges, nodes = dict(), dict()
+        for node_id, node in json_data['graphResult']['graphData']['nodes'].items():
+            nodes[node_id] = Node(**node)
+        for edge_id, edge_json in json_data['graphResult']['graphData']['edges'].items():
+            edge = Edge(**edge_json)
+            edge.edgeSettings = edge_type[edge.edgeSettingsId]
+            if edge.source:
+                edge.source = nodes[edge.source]
+            if edge.target:
+                edge.target = nodes[edge.target]
+            edges[edge_id] = edge
+
+        return edges, nodes
