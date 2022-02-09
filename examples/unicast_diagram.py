@@ -1,7 +1,7 @@
 """
 unicast_diagram.py
 """
-from ipfabric_diagrams import IPFDiagram, PathLookupSettings, Unicast, Algorithm, EntryPoint, Options
+from ipfabric_diagrams import IPFDiagram, PathLookupSettings, Unicast, Algorithm, EntryPoint, OtherOptions
 
 if __name__ == '__main__':
     ipf = IPFDiagram()
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             EntryPoint(sn="9AMSST2E75V", iface="GigabitEthernet0/0", hostname="L35FW1"),
             EntryPoint(sn="9AJR4UMXS30", iface="GigabitEthernet0/0", hostname="L35FW2")
         ]),
-        otherOptions=Options(applications="(dns)")
+        otherOptions=OtherOptions(applications="(dns)")
     )
     png_data = ipf.diagram_png(uni)
     with open('unicast-entry.png', 'wb') as f:

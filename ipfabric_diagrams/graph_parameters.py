@@ -13,7 +13,7 @@ class ICMP(BaseModel):
     code: int
 
 
-class Options(BaseModel):
+class OtherOptions(BaseModel):
     applications: Optional[str] = ".*"
     tracked: Optional[bool] = False
 
@@ -52,7 +52,7 @@ class PathLookup(BaseModel):
     securedPath: Optional[bool] = True
     srcRegions: Optional[str] = ".*"
     dstRegions: Optional[str] = ".*"
-    otherOptions: Optional[Options] = Field(default_factory=Options)
+    otherOptions: Optional[OtherOptions] = Field(default_factory=OtherOptions)
     firstHopAlgorithm: Optional[Algorithm] = Field(default_factory=Algorithm)
 
     @validator("protocol")
