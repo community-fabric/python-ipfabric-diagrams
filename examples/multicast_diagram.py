@@ -9,4 +9,6 @@ if __name__ == '__main__':
     settings = PathLookupSettings()
     test = ipf.diagram_json(multi, graph_settings=settings)
 
+    model_data = ipf.diagram_model(multi)
+
     ipf.close()

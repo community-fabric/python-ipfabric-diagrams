@@ -17,6 +17,7 @@ if __name__ == '__main__':
     )
 
     json_data = ipf.diagram_json(uni)
+    model_data = ipf.diagram_model(uni)
 
     settings = PathLookupSettings()
     png_data = ipf.diagram_png(uni, graph_settings=settings)

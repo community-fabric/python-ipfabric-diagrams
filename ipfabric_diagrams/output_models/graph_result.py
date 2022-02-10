@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Dict
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -6,11 +6,21 @@ from pydantic import BaseModel, Field
 from ipfabric_diagrams.input_models.graph_settings import EdgeSettings
 
 
-class Severity(BaseModel):
+class Checks(BaseModel):
     green: int = Field(alias='0')
     blue: int = Field(alias='10')
     amber: int = Field(alias='20')
     red: int = Field(alias='30')
+
+
+class Severity(Checks):
+    pass
+
+
+class Topics(BaseModel):
+    acl: Checks = Field(alias='ACL')
+    forwarding: Checks = Field(alias='FORWARDING')
+    zonefw: Checks = Field(alias='ZONEFW')
 
 
 class TrafficScore(BaseModel):
@@ -18,17 +28,6 @@ class TrafficScore(BaseModel):
     dropped: int
     forwarded: int
     total: int
-
-
-class Packet(BaseModel):
-    dst: Union[List[str], str]
-    src: Union[List[str], str]
-    type: str
-    protocol: Optional[str] = None
-    etherType: Optional[str] = None
-    ttl: Optional[int] = None
-    fragmentOffest: Optional[int] = Field(alias='fragment offset')
-    flags: Optional[List[str]] = None
 
 
 class Label(BaseModel):
@@ -74,10 +73,39 @@ class NetworkEdge(Edge, BaseModel):
 class PathLookupEdge(Edge, BaseModel):
     nextEdgeIds: List[str]
     prevEdgeIds: List[str]
-    packet: List[Packet]
+    packet: List[dict]
     severityInfo: Severity
     sourceIfaceName: Optional[str]
     targetIfaceName: Optional[str]
     trafficScore: TrafficScore
     nextEdge: Optional[list] = Field(default_factory=list)
     prevEdge: Optional[list] = Field(default_factory=list)
+
+
+class EventsSummary(BaseModel):
+    flags: list
+    topics: Topics
+    global_list: list = Field(alias='global')
+
+
+class Decision(BaseModel):
+    traces: list
+    trafficIn: Optional[Dict[str, List[str]]] = Field(default_factory=dict)
+    trafficOut: Optional[Dict[str, List[str]]] = Field(default_factory=dict)
+
+
+class Check(BaseModel):
+    exists: bool
+
+
+class PathLookup(BaseModel):
+    eventsSummary: EventsSummary
+    decisions: Dict[str, Decision]
+    passingTraffic: str
+    check: Check
+
+
+class GraphResult(BaseModel):
+    nodes: Dict[str, Node]
+    edges: Dict[str, Union[NetworkEdge, PathLookupEdge]]
+    pathlookup: Optional[PathLookup] = None

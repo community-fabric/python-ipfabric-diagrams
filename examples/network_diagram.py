@@ -9,6 +9,7 @@ if __name__ == '__main__':
 
     net = Network(sites=['MPLS', 'LAB01'], all_network=True)
     json_data = ipf.diagram_json(net)
+    model_data = ipf.diagram_model(net)
 
     settings = NetworkSettings()
     settings.hide_protocol('xdp')
@@ -24,6 +25,6 @@ if __name__ == '__main__':
     settings = NetworkSettings()
     for proto in VALID_NET_PROTOCOLS:
         settings.ungroup_protocol(proto)
-    edges, nodes = ipf.diagram_model(Network(sites='MPLS'), graph_settings=settings)
+    graph_result = ipf.diagram_model(Network(sites='MPLS'), graph_settings=settings)
 
     ipf.close()

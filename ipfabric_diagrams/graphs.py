@@ -5,7 +5,7 @@ from ipfabric.api import IPFabricAPI
 from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
 from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay, \
     GroupSettings
-from ipfabric_diagrams.output_models.graph_result import NetworkEdge, Node, PathLookupEdge
+from ipfabric_diagrams.output_models.graph_result import NetworkEdge, Node, PathLookupEdge, GraphResult, PathLookup
 
 GRAPHS_URL = "graphs/"
 
@@ -97,7 +97,7 @@ class IPFDiagram(IPFabricAPI):
         else:
             return self._diagram_pathlookup(json_data, edge_setting_dict)
 
-    def _diagram_network(self, json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> (dict, dict):
+    def _diagram_network(self, json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> GraphResult:
         edges, nodes = dict(), dict()
         for node_id, node in json_data['graphResult']['graphData']['nodes'].items():
             nodes[node_id] = Node(**node)
@@ -110,18 +110,19 @@ class IPFDiagram(IPFabricAPI):
                 edge.target = nodes[edge.target]
             edges[edge_id] = edge
 
-        return edges, nodes
+        return GraphResult(edges=edges, nodes=nodes)
 
-    def _diagram_pathlookup(self, json_data: dict, edge_setting_dict: dict) -> (dict, dict):
-        edges, nodes = self._diagram_network(json_data, edge_setting_dict, pathlookup=True)
+    def _diagram_pathlookup(self, json_data: dict, edge_setting_dict: dict) -> GraphResult:
+        graph_result = self._diagram_network(json_data, edge_setting_dict, pathlookup=True)
 
-        for edge_id, edge in edges.items():
+        for edge_id, edge in graph_result.edges.items():
             for prev_id in edge.prevEdgeIds:
-                edge.prevEdge.append(edges[prev_id])
+                edge.prevEdge.append(graph_result.edges[prev_id])
             for next_id in edge.nextEdgeIds:
-                edge.nextEdge.append(edges[next_id] if next_id in edges else next_id)
+                edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
 
-        return edges, nodes
+        graph_result.pathlookup = PathLookup(**json_data['pathlookup'])
+        return graph_result
 
     @staticmethod
     def _diagram_edge_settings(graph_settings: dict) -> dict:
