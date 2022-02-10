@@ -134,6 +134,7 @@ class NetworkSettings(GraphSettings):
 
     def ungroup_protocol(self, protocol_name: str):
         return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
+        # TODO Uncomment
         # if protocol_name.lower() in VALID_NET_PROTOCOLS:
         #     return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
         # else:
@@ -158,6 +159,10 @@ class PathLookupSettings(GraphSettings):
     def __init__(self):
         edges = [EdgeSettings(**edge) for edge in DEFAULT_PATHLOOKUP]
         super().__init__(edges=edges)
+
+    @property
+    def protocol_priority(self):
+        return [edge.name for edge in self.edges]
 
 
 class Overlay(BaseModel):

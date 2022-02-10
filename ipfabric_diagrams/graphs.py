@@ -89,7 +89,7 @@ class IPFDiagram(IPFabricAPI):
             snapshot_id: str = None,
             overlay: Overlay = None,
             graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-    ):
+    ) -> GraphResult:
         json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
         edge_setting_dict = self._diagram_edge_settings(json_data['graphResult']['settings'])
         if isinstance(parameters, Network):
@@ -97,7 +97,8 @@ class IPFDiagram(IPFabricAPI):
         else:
             return self._diagram_pathlookup(json_data, edge_setting_dict)
 
-    def _diagram_network(self, json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> GraphResult:
+    @staticmethod
+    def _diagram_network(json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> GraphResult:
         edges, nodes = dict(), dict()
         for node_id, node in json_data['graphResult']['graphData']['nodes'].items():
             nodes[node_id] = Node(**node)
