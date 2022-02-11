@@ -1,6 +1,6 @@
 # IPFabric
 
-IPFabric is a Python module for connecting to and communicating against an IP Fabric instance.
+ipfabric-diagrams is a Python module for connecting to and graphing topologies against an IP Fabric instance.
 
 ## About
 
@@ -18,27 +18,17 @@ pip install ipfabric-diagrams
 
 ## Introduction
 
-CURRENTLY WIP - Will be released after IP Fabric version 4.3.
+This package is used for diagramming via the API for IP Fabric v4.3.0.  
+Examples can be located under [examples](examples/) directory.
 
 ## Authentication
-### Basic
-Please take a look at [basic.py](examples/basic.py) for basic authentication examples
+Please take a look at [python-ipfabric](https://github.com/community-fabric/python-ipfabric/blob/main/examples/basic.py) 
+for all authentication options.
 
-### Environment 
-The easiest way to use this package is with a `.env` file.  You can copy the sample and edit it with your environment variables. 
-
-```commandline
-cp sample.env .env
+```python
+from ipfabric_diagrams import IPFDiagram
+ipf = IPFDiagram(base_url='https://demo3.ipfabric.io/', token='token', verify=False, timeout=15)
 ```
-
-This contains the following variables which can also be set as environment variables instead of a .env file.
-```
-IPF_URL="https://demo3.ipfabric.io"
-IPF_TOKEN=TOKEN
-IPF_VERIFY=true
-```
-
-**`IPF_DEV` is an internal variable only, do not set to True.**
 
 ## Development
 
