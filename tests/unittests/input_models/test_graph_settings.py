@@ -44,7 +44,8 @@ class GraphSettingTest(unittest.TestCase):
             PathLookup(ignoredTopics=['bad'])
 
     def test_graph_settings(self):
-        g = GraphSettings(edges=[EdgeSettings(name='Test', style=Style(color='red'), type='edge')]).settings('v4.3')
+        g = GraphSettings(edges=[EdgeSettings(name='Test', style=Style(color='red'), type='edge')],
+                          pathLookup=PathLookup()).settings('v4.3')
         g['edges'][0].pop('id', None)
         self.assertEqual(g, {'edges': [{'name': 'Test', 'visible': True, 'grouped': True,
                                                          'style': {'color': '#f00', 'pattern': 'solid',

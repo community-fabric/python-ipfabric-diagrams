@@ -7,10 +7,10 @@ from ipfabric_diagrams.input_models.graph_settings import EdgeSettings
 
 
 class Checks(BaseModel):
-    green: int = Field(alias='0')
-    blue: int = Field(alias='10')
-    amber: int = Field(alias='20')
-    red: int = Field(alias='30')
+    green: int = Field(alias="0")
+    blue: int = Field(alias="10")
+    amber: int = Field(alias="20")
+    red: int = Field(alias="30")
 
 
 class Severity(Checks):
@@ -18,9 +18,9 @@ class Severity(Checks):
 
 
 class Topics(BaseModel):
-    acl: Checks = Field(alias='ACL')
-    forwarding: Checks = Field(alias='FORWARDING')
-    zonefw: Checks = Field(alias='ZONEFW')
+    acl: Checks = Field(alias="ACL")
+    forwarding: Checks = Field(alias="FORWARDING")
+    zonefw: Checks = Field(alias="ZONEFW")
 
 
 class TrafficScore(BaseModel):
@@ -85,7 +85,7 @@ class PathLookupEdge(Edge, BaseModel):
 class EventsSummary(BaseModel):
     flags: list
     topics: Topics
-    global_list: list = Field(alias='global')
+    global_list: list = Field(alias="global")
 
 
 class Decision(BaseModel):

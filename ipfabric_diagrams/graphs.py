@@ -3,8 +3,13 @@ from typing import Union
 from ipfabric.api import IPFabricAPI
 
 from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
-from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, PathLookupSettings, GraphSettings, Overlay, \
-    GroupSettings
+from ipfabric_diagrams.input_models.graph_settings import (
+    NetworkSettings,
+    PathLookupSettings,
+    GraphSettings,
+    Overlay,
+    GroupSettings,
+)
 from ipfabric_diagrams.output_models.graph_result import NetworkEdge, Node, PathLookupEdge, GraphResult, PathLookup
 
 GRAPHS_URL = "graphs/"
@@ -84,14 +89,14 @@ class IPFDiagram(IPFabricAPI):
         )
 
     def diagram_model(
-            self,
-            parameters: Union[Unicast, Multicast, Host2GW, Network],
-            snapshot_id: str = None,
-            overlay: Overlay = None,
-            graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        self,
+        parameters: Union[Unicast, Multicast, Host2GW, Network],
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ) -> GraphResult:
         json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
-        edge_setting_dict = self._diagram_edge_settings(json_data['graphResult']['settings'])
+        edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
         if isinstance(parameters, Network):
             return self._diagram_network(json_data, edge_setting_dict)
         else:
@@ -100,9 +105,9 @@ class IPFDiagram(IPFabricAPI):
     @staticmethod
     def _diagram_network(json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> GraphResult:
         edges, nodes = dict(), dict()
-        for node_id, node in json_data['graphResult']['graphData']['nodes'].items():
+        for node_id, node in json_data["graphResult"]["graphData"]["nodes"].items():
             nodes[node_id] = Node(**node)
-        for edge_id, edge_json in json_data['graphResult']['graphData']['edges'].items():
+        for edge_id, edge_json in json_data["graphResult"]["graphData"]["edges"].items():
             edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
             edge.edgeSettings = edge_setting_dict[edge.edgeSettingsId]
             if edge.source:
@@ -122,7 +127,7 @@ class IPFDiagram(IPFabricAPI):
             for next_id in edge.nextEdgeIds:
                 edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
 
-        graph_result.pathlookup = PathLookup(**json_data['pathlookup'])
+        graph_result.pathlookup = PathLookup(**json_data["pathlookup"])
         return graph_result
 
     @staticmethod

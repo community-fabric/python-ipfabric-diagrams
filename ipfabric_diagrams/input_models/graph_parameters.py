@@ -181,9 +181,24 @@ class Host2GW(BaseModel):
         return parameters
 
 
+class Layout(BaseModel):
+    path: str
+    layout: str
+
+    @validator("layout")
+    def _valid_layout(cls, v):
+        if v and v not in ["circular", "downwardTree", "hierarchical", "radial", "universal", "upwardTree"]:
+            raise ValueError(
+                f'Layout "{v}" is not in the valid layouts of '
+                f'["circular", "downwardTree", "hierarchical", "radial", "universal", "upwardTree"]'
+            )
+        return v
+
+
 class Network(BaseModel):
     sites: Optional[Union[str, List[str]]] = [ALL_NETWORK]
     all_network: Optional[bool] = Field(False, description="Show all sites as clouds, UI option 'All Network'")
+    layouts: Optional[List[Layout]] = None
 
     @validator("sites")
     def _format_paths(cls, v):
@@ -195,4 +210,6 @@ class Network(BaseModel):
         parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
         if self.all_network and ALL_NETWORK not in parameters["paths"]:
             parameters["paths"].append(ALL_NETWORK)
+        if self.layouts:
+            parameters["layouts"] = [vars(l) for l in self.layouts]
         return parameters

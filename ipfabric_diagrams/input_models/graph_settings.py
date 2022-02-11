@@ -1,11 +1,11 @@
 from typing import Optional, List, Union
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from pydantic import BaseModel, validator, Field
 from pydantic.color import Color
 
 from ipfabric_diagrams.input_models.constants import VALID_DEV_TYPES, DEFAULT_NETWORK, DEFAULT_PATHLOOKUP, \
-    VALID_NET_PROTOCOLS
+    VALID_NET_PROTOCOLS, VALID_PROTOCOL_LABELS
 
 
 class Style(BaseModel):
@@ -51,7 +51,6 @@ class EdgeSettings(Setting, BaseModel):
     def settings(self, version: str) -> dict:
         base_settings = self.base_settings(version)
         base_settings['labels'] = self.labels
-        base_settings['id'] = str(uuid4())  # TODO Remove when IPF does not require
         return base_settings
 
 
@@ -85,7 +84,7 @@ class PathLookup(BaseModel):
 class GraphSettings(BaseModel):
     edges: List[Union[GroupSettings, EdgeSettings]]
     hiddenDeviceTypes: Optional[List[str]] = Field(default_factory=list)
-    pathLookup: PathLookup = Field(default_factory=PathLookup)
+    pathLookup: Optional[PathLookup] = None
 
     @validator('hiddenDeviceTypes')
     def _valid_dev_types(cls, v):
@@ -94,11 +93,13 @@ class GraphSettings(BaseModel):
         return v
 
     def settings(self, version: str) -> dict:
-        return dict(
+         settings = dict(
             edges=[edge.settings(version) for edge in self.edges],
             hiddenDeviceTypes=self.hiddenDeviceTypes,
-            pathLookup=vars(self.pathLookup)
         )
+         if self.pathLookup:
+             settings['pathLookup'] = vars(self.pathLookup)
+         return settings
 
 
 class NetworkSettings(GraphSettings):
@@ -133,12 +134,10 @@ class NetworkSettings(GraphSettings):
             raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
 
     def ungroup_protocol(self, protocol_name: str):
-        return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
-        # TODO Uncomment
-        # if protocol_name.lower() in VALID_NET_PROTOCOLS:
-        #     return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
-        # else:
-        #     raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+        if protocol_name.lower() in VALID_NET_PROTOCOLS:
+            return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
+        else:
+            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
 
     def hide_group(self, group_name: str):
         group_names = [g.name.lower() for g in self.edges if isinstance(g, GroupSettings)]
@@ -154,11 +153,38 @@ class NetworkSettings(GraphSettings):
         else:
             raise KeyError(f"Group {group_name} does not exist.  Valid groups are {group_names}")
 
+    @staticmethod
+    def _proto_label(edge: EdgeSettings, protocol_name: str, label_name: str):
+        if edge.name.lower() == protocol_name:
+            proto = next(x for x in VALID_PROTOCOL_LABELS[protocol_name].labels if x == label_name)
+            if proto.center:
+                edge.labels[0] = proto.name
+            else:
+                edge.labels[1] = proto.name
+            return True
+        return False
+
+    def change_label(self, protocol_name: str, label_name: str):
+        protocol_name, label_name = protocol_name.lower(), label_name.lower()
+        if protocol_name not in VALID_NET_PROTOCOLS:
+            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+        if label_name not in VALID_PROTOCOL_LABELS[protocol_name].labels:
+            raise KeyError(f"Label {label_name} does not exist for protocol {protocol_name}.  "
+                           f"Valid labels for {protocol_name} are {VALID_PROTOCOL_LABELS[protocol_name].labels}")
+        for edge in self.edges:
+            if isinstance(edge, GroupSettings):
+                for child in edge.children:
+                    if self._proto_label(child, protocol_name, label_name):
+                        return True
+            if self._proto_label(edge, protocol_name, label_name):
+                return True
+        return False
+
 
 class PathLookupSettings(GraphSettings):
     def __init__(self):
         edges = [EdgeSettings(**edge) for edge in DEFAULT_PATHLOOKUP]
-        super().__init__(edges=edges)
+        super().__init__(edges=edges, pathLookup=PathLookup())
 
     @property
     def protocol_priority(self):
