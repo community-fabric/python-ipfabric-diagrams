@@ -43,16 +43,15 @@ class GraphSettingTest(unittest.TestCase):
         with self.assertRaises(ValueError) as err:
             PathLookup(ignoredTopics=['bad'])
 
-    def test_graph_settings(self):
-        g = GraphSettings(edges=[EdgeSettings(name='Test', style=Style(color='red'), type='edge')],
-                          pathLookup=PathLookup()).settings('v4.3')
-        g['edges'][0].pop('id', None)
-        self.assertEqual(g, {'edges': [{'name': 'Test', 'visible': True, 'grouped': True,
-                                                         'style': {'color': '#f00', 'pattern': 'solid',
-                                                                   'thicknessThresholds': [2, 4, 8]},
-                                                         'type': 'edge', 'labels': ['protocols']}],
-                                              'hiddenDeviceTypes': [], 'pathLookup':
-                                                  {'ignoredTopics': [], 'colorDetectedLoops': True}})
+    def test_network_settings_return(self):
+        g = NetworkSettings().settings('v4.3')
+        g['edges'] = []
+        self.assertEqual(g, {'edges': [], 'hiddenDeviceTypes': ['ap', 'fex', 'host', 'phone']})
+
+    def test_pathlookup_settings_return(self):
+        g = PathLookupSettings().settings('v4.3')
+        g['edges'] = []
+        self.assertEqual(g, {'edges': [], 'pathLookup': {'ignoredTopics': [], 'colorDetectedLoops': True}})
 
     def test_graph_settings_failed(self):
         with self.assertRaises(ValueError) as err:

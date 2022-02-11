@@ -5,7 +5,7 @@ from pydantic import BaseModel, validator, Field
 from pydantic.color import Color
 
 from ipfabric_diagrams.input_models.constants import VALID_DEV_TYPES, DEFAULT_NETWORK, DEFAULT_PATHLOOKUP, \
-    VALID_NET_PROTOCOLS, VALID_PROTOCOL_LABELS
+    VALID_NET_PROTOCOLS, VALID_PROTOCOL_LABELS, VALID_PATH_PROTOCOLS
 
 
 class Style(BaseModel):
@@ -92,15 +92,6 @@ class GraphSettings(BaseModel):
             raise ValueError(f"Device Types '{v}' must be None or in {VALID_DEV_TYPES}.")
         return v
 
-    def settings(self, version: str) -> dict:
-         settings = dict(
-            edges=[edge.settings(version) for edge in self.edges],
-            hiddenDeviceTypes=self.hiddenDeviceTypes,
-        )
-         if self.pathLookup:
-             settings['pathLookup'] = vars(self.pathLookup)
-         return settings
-
 
 class NetworkSettings(GraphSettings):
     def __init__(self):
@@ -180,6 +171,13 @@ class NetworkSettings(GraphSettings):
                 return True
         return False
 
+    def settings(self, version: str) -> dict:
+        settings = dict(
+            edges=[edge.settings(version) for edge in self.edges],
+            hiddenDeviceTypes=self.hiddenDeviceTypes,
+        )
+        return settings
+
 
 class PathLookupSettings(GraphSettings):
     def __init__(self):
@@ -188,7 +186,30 @@ class PathLookupSettings(GraphSettings):
 
     @property
     def protocol_priority(self):
-        return [edge.name for edge in self.edges]
+        return {edge.name.lower(): idx for idx, edge in enumerate(self.edges)}
+
+    def increase_priority(self, protocol_name: str):
+        if protocol_name.lower() not in VALID_PATH_PROTOCOLS:
+            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_PATH_PROTOCOLS}")
+        current = self.protocol_priority[protocol_name]
+        if current != 0:
+            self.edges[current], self.edges[current - 1] = self.edges[current - 1], self.edges[current]
+        return True
+
+    def decrease_priority(self, protocol_name: str):
+        if protocol_name.lower() not in VALID_PATH_PROTOCOLS:
+            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_PATH_PROTOCOLS}")
+        current = self.protocol_priority[protocol_name]
+        if current != len(self.edges) - 1:
+            self.edges[current], self.edges[current + 1] = self.edges[current + 1], self.edges[current]
+        return True
+
+    def settings(self, version: str) -> dict:
+        settings = dict(
+            edges=[edge.settings(version) for edge in self.edges],
+            pathLookup=vars(self.pathLookup),
+        )
+        return settings
 
 
 class Overlay(BaseModel):
