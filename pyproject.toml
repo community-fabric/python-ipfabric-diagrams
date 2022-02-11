@@ -16,9 +16,9 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7.1"
 pydantic = "^1.8.2"
-ipfabric = "^0.7.0"
+ipfabric = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

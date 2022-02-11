@@ -1,4 +1,4 @@
-from .parameters import ICMP
+from ipfabric_diagrams.input_models.graph_parameters import ICMP
 
 
 ECHO_REPLY = ICMP(type=0, code=0)

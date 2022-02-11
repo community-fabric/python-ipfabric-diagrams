@@ -1,0 +1,378 @@
+[
+  {
+    "name": "Layer 1",
+    "type": "group",
+    "label": "L1",
+    "grouped": true,
+    "style": {
+      "color": "#6fb96f",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "children": [
+      {
+        "name": "xdp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#66ff66",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "fex",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#a0a0a0",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "wired",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#be93ff",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "wireless",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#be93ff",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol"
+        ]
+      }
+    ],
+    "visible": true
+  },
+  {
+    "name": "Layer 2",
+    "type": "group",
+    "label": "L2",
+    "grouped": true,
+    "style": {
+      "color": "#7aa3cc",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "children": [
+      {
+        "name": "stp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#99ccff",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      }
+    ],
+    "visible": true
+  },
+  {
+    "name": "Layer 3",
+    "type": "group",
+    "label": "L3",
+    "grouped": true,
+    "style": {
+      "color": "#b77acc",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "children": [
+      {
+        "name": "rib",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ff99ff",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "dgw",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ff99ff",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "ebgp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#009688",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "as"
+        ]
+      },
+      {
+        "name": "ibgp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#009688",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "as"
+        ]
+      },
+      {
+        "name": "ospf",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ffd600",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "ospfv3",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ffd600",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "eigrp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#00bcd4",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "ldp",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ff9800",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "pim",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#9d744d",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "rip",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#a1887f",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "isis",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#cddc39",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      },
+      {
+        "name": "vxlan",
+        "type": "protocol",
+        "grouped": true,
+        "style": {
+          "color": "#ff9999",
+          "pattern": "solid",
+          "thicknessThresholds": [
+            2,
+            4,
+            8
+          ]
+        },
+        "visible": true,
+        "labels": [
+          "protocol",
+          "intName"
+        ]
+      }
+    ],
+    "visible": true
+  }
+]

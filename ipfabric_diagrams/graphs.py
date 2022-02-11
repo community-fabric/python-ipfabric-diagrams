@@ -1,106 +1,142 @@
-import ipaddress
-from typing import Optional, Union
+from typing import Union
+
 from ipfabric.api import IPFabricAPI
 
+from ipfabric_diagrams.input_models.graph_parameters import Unicast, Multicast, Host2GW, Network
+from ipfabric_diagrams.input_models.graph_settings import (
+    NetworkSettings,
+    PathLookupSettings,
+    GraphSettings,
+    Overlay,
+    GroupSettings,
+)
+from ipfabric_diagrams.output_models.graph_result import NetworkEdge, Node, PathLookupEdge, GraphResult, PathLookup
 
-class IPFPath(IPFabricAPI):
+GRAPHS_URL = "graphs/"
+
+
+class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._style = "json"
 
-    @property
-    def style(self):
-        return self._style
-
-    @style.setter
-    def style(self, style):
-        style = style or "json"
-        if style not in ["json", "svg", "png"]:
-            raise ValueError(f"##ERROR## EXIT -> Graph style '{style}' must be one of ['json', 'svg', 'png']")
-        self._style = style
-
-    def _query(self, payload: dict):
-        """
-        Submits a query, does no formating on the parameters.  Use for copy/pasting from the webpage.
-        :param payload: dict: Dictionary to submit in POST.
-        :return: list: List of Dictionary objects.
-        """
-        url = "graphs"
-        if self.style == "svg":
-            url = "graphs/svg"
-        elif self.style == "png":
-            url = "graphs/png"
-        res = self.post(url, json=payload)
-        res.raise_for_status()
-        if self.style == "json":
-            return res.json()
-        else:
-            return res.content
-
-    def site(
+    def _query(
         self,
-        site_name: Union[str, list],
-        snapshot_id: Optional[str] = None,
-        overlay: dict = None,
+        parameters: dict,
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        image: str = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ):
         """
-        Returns a diagram for a site or sites
-        :param site_name: Union[str, list]: A single site name or a list of site names
-        :param snapshot_id: str: Optional Snapshot ID
-        :param overlay: dict: Optional Overlay dictionary
-        :return:
+        Submits a query, does no formating on the parameters.  Use for copy/pasting from the webpage.
+        :param parameters: dict: Dictionary to submit in POST.
+        :return: list: List of Dictionary objects.
         """
-        payload = {
-            "parameters": {
-                "groupBy": "siteName",
-                "layouts": [],
-                "paths": [site_name] if isinstance(site_name, str) else site_name,
-                "type": "topology",
-            },
-            "snapshot": snapshot_id or self.snapshot_id,
-        }
+        url = GRAPHS_URL + image if image else GRAPHS_URL
+        payload = dict(parameters=parameters, snapshot=snapshot_id or self.snapshot_id)
         if overlay:
-            payload["overlay"] = overlay
-        return self._query(payload)
+            if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
+                raise ValueError(f"Snapshot {overlay.snapshotToCompare} not found in IP Fabric.")
+            payload["overlay"] = overlay.overlay(self.os_version)
+        if graph_settings:
+            payload["settings"] = graph_settings.settings(self.os_version)
+        res = self.post(url, json=payload)
+        res.raise_for_status()
+        return res.content if image else res.json()
 
-    def host_to_gw(
+    def diagram_json(
         self,
-        src_ip: str,
-        grouping: Optional[str] = "siteName",
-        snapshot_id: Optional[str] = None,
-    ) -> Union[dict, bytes]:
-        """
-        Execute an "Host to Gateway" diagram query for the given set of parameters.
-        :param src_ip: str: Source IP address or subnet
-        :param grouping: str: Group by "siteName", "routingDomain", "stpDomain"
-        :param snapshot_id: str: Snapshot ID to override class default
-        :return: Union[dict, str]: json contains a dictionary with 'graphResult' and 'pathlookup' primary keys.
-                                    If not json then return bytes
-        """
-        self.check_subnets(src_ip)
-        payload = dict(
-            parameters=dict(
-                startingPoint=src_ip,
-                type="pathLookup",
-                pathLookupType="hostToDefaultGW",
-                groupBy=grouping,
-            ),
-            snapshot=snapshot_id or self.snapshot_id,
+        parameters: Union[Unicast, Multicast, Host2GW, Network],
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+    ) -> dict:
+        return self._query(
+            parameters.parameters(self.os_version),
+            snapshot_id=snapshot_id,
+            overlay=overlay,
+            graph_settings=graph_settings,
         )
-        return self._query(payload)
+
+    def diagram_svg(
+        self,
+        parameters: Union[Unicast, Multicast, Host2GW, Network],
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+    ) -> bytes:
+        return self._query(
+            parameters.parameters(self.os_version),
+            snapshot_id=snapshot_id,
+            overlay=overlay,
+            image="svg",
+            graph_settings=graph_settings,
+        )
+
+    def diagram_png(
+        self,
+        parameters: Union[Unicast, Multicast, Host2GW, Network],
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+    ) -> bytes:
+        return self._query(
+            parameters.parameters(self.os_version),
+            snapshot_id=snapshot_id,
+            overlay=overlay,
+            image="png",
+            graph_settings=graph_settings,
+        )
+
+    def diagram_model(
+        self,
+        parameters: Union[Unicast, Multicast, Host2GW, Network],
+        snapshot_id: str = None,
+        overlay: Overlay = None,
+        graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+    ) -> GraphResult:
+        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
+        edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
+        if isinstance(parameters, Network):
+            return self._diagram_network(json_data, edge_setting_dict)
+        else:
+            return self._diagram_pathlookup(json_data, edge_setting_dict)
 
     @staticmethod
-    def check_subnets(*ips) -> bool:
-        """
-        Checks for valid IP Addresses or Subnet
-        :param ips: ip addresses
-        :return: True if a subnet is found to set to networkMode, False if only hosts
-        """
-        masks = set()
-        for ip in ips:
-            try:
-                masks.add(ipaddress.IPv4Interface(ip).network.prefixlen)
-            except (ipaddress.AddressValueError, ipaddress.NetmaskValueError):
-                raise ipaddress.AddressValueError(f"{ip} is not a valid IP or subnet.")
+    def _diagram_network(json_data: dict, edge_setting_dict: dict, pathlookup: bool = False) -> GraphResult:
+        edges, nodes = dict(), dict()
+        for node_id, node in json_data["graphResult"]["graphData"]["nodes"].items():
+            nodes[node_id] = Node(**node)
+        for edge_id, edge_json in json_data["graphResult"]["graphData"]["edges"].items():
+            edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
+            edge.edgeSettings = edge_setting_dict[edge.edgeSettingsId]
+            if edge.source:
+                edge.source = nodes[edge.source]
+            if edge.target:
+                edge.target = nodes[edge.target]
+            edges[edge_id] = edge
 
-        return True if masks != {32} else False
+        return GraphResult(edges=edges, nodes=nodes)
+
+    def _diagram_pathlookup(self, json_data: dict, edge_setting_dict: dict) -> GraphResult:
+        graph_result = self._diagram_network(json_data, edge_setting_dict, pathlookup=True)
+
+        for edge_id, edge in graph_result.edges.items():
+            for prev_id in edge.prevEdgeIds:
+                edge.prevEdge.append(graph_result.edges[prev_id])
+            for next_id in edge.nextEdgeIds:
+                edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
+
+        graph_result.pathlookup = PathLookup(**json_data["pathlookup"])
+        return graph_result
+
+    @staticmethod
+    def _diagram_edge_settings(graph_settings: dict) -> dict:
+        net_settings = GraphSettings(**graph_settings)
+        edge_setting_dict = dict()
+        for edge in net_settings.edges:
+            edge_setting_dict[edge.id] = edge
+            if isinstance(edge, GroupSettings):
+                for child in edge.children:
+                    edge_setting_dict[child.id] = child
+        return edge_setting_dict

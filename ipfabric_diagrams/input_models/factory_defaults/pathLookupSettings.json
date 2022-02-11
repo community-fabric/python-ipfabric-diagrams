@@ -1,0 +1,154 @@
+[
+  {
+    "name": "vxlan",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#d4b524",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "capwap",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#d4b524",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "gre",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#d4b524",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "esp",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#d4b524",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "mpls",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#ff9800",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "ethernetVlan",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#99ccff",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "ip",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#ff99ff",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  },
+  {
+    "name": "ethernet",
+    "type": "pathLookupEdge",
+    "grouped": false,
+    "style": {
+      "color": "#7aa3cc",
+      "pattern": "solid",
+      "thicknessThresholds": [
+        2,
+        4,
+        8
+      ]
+    },
+    "visible": true,
+    "labels": [
+      "intName",
+      "protocol"
+    ]
+  }
+]
