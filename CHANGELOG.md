@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.1 (2022-02-16)
+### Fix
+* Functional tests ([`5887d15`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/5887d1557a840e32e458869f215f0d6d9376e726))
+* Updated ipfabric ([`5ac5c98`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/5ac5c982edb2c42f7181053bde18e432ccd12a57))
+
 ## v1.1.0 (2022-02-11)
 ### Feature
 * Updated unicast for priority. ([`b203047`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/b203047346d354b6a65473e5d41316396756af56))
