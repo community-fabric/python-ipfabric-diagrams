@@ -129,11 +129,11 @@ class IPFDiagram(IPFabricAPI):
                 edge.prevEdge.append(graph_result.edges[prev_id])
             for next_id in edge.nextEdgeIds:
                 edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
-        for a in json_data["pathlookup"]['decisions'].values():
-            for b in a['traces']:
-                for c in b['trace']:
-                    for d in c['events']:
-                        print(d)
+        # for a in json_data["pathlookup"]['decisions'].values():
+        #     for b in a['traces']:
+        #         for c in b['trace']:
+        #             for d in c['events']:
+        #                 print(d)
         graph_result.pathlookup = PathLookup(**json_data["pathlookup"])
         return graph_result
 
