@@ -10,11 +10,11 @@ if __name__ == '__main__':
 
     settings = PathLookupSettings()
     png_data = ipf.diagram_png(h2g, graph_settings=settings)
-    with open('host2gw.png', 'wb') as f:
+    with open('tmp/host2gw.png', 'wb') as f:
         f.write(png_data)
 
     svg_data = ipf.diagram_svg(h2g)
-    with open('host2gw.svg', 'wb') as f:
+    with open('tmp/host2gw.svg', 'wb') as f:
         f.write(svg_data)
 
     ipf.close()

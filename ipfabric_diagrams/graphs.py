@@ -1,3 +1,4 @@
+from os import environ
 from typing import Union
 
 from ipfabric.api import IPFabricAPI
@@ -18,6 +19,7 @@ GRAPHS_URL = "graphs/"
 class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        environ['IPF_VERSION'] = self.os_version
 
     def _query(
         self,
@@ -37,9 +39,9 @@ class IPFDiagram(IPFabricAPI):
         if overlay:
             if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
                 raise ValueError(f"Snapshot {overlay.snapshotToCompare} not found in IP Fabric.")
-            payload["overlay"] = overlay.overlay(self.os_version)
+            payload["overlay"] = overlay.overlay()
         if graph_settings:
-            payload["settings"] = graph_settings.settings(self.os_version)
+            payload["settings"] = graph_settings.settings()
         res = self.post(url, json=payload)
         res.raise_for_status()
         return res.content if image else res.json()
@@ -52,7 +54,7 @@ class IPFDiagram(IPFabricAPI):
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ) -> dict:
         return self._query(
-            parameters.parameters(self.os_version),
+            parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             graph_settings=graph_settings,
@@ -66,7 +68,7 @@ class IPFDiagram(IPFabricAPI):
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ) -> bytes:
         return self._query(
-            parameters.parameters(self.os_version),
+            parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="svg",
@@ -81,7 +83,7 @@ class IPFDiagram(IPFabricAPI):
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
     ) -> bytes:
         return self._query(
-            parameters.parameters(self.os_version),
+            parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="png",
@@ -109,7 +111,8 @@ class IPFDiagram(IPFabricAPI):
             nodes[node_id] = Node(**node)
         for edge_id, edge_json in json_data["graphResult"]["graphData"]["edges"].items():
             edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
-            edge.edgeSettings = edge_setting_dict[edge.edgeSettingsId]
+            edge.protocol = edge_setting_dict[edge.edgeSettingsId].name if \
+                edge.edgeSettingsId in edge_setting_dict else None
             if edge.source:
                 edge.source = nodes[edge.source]
             if edge.target:
@@ -126,7 +129,11 @@ class IPFDiagram(IPFabricAPI):
                 edge.prevEdge.append(graph_result.edges[prev_id])
             for next_id in edge.nextEdgeIds:
                 edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
-
+        # for a in json_data["pathlookup"]['decisions'].values():
+        #     for b in a['traces']:
+        #         for c in b['trace']:
+        #             for d in c['events']:
+        #                 print(d)
         graph_result.pathlookup = PathLookup(**json_data["pathlookup"])
         return graph_result
 

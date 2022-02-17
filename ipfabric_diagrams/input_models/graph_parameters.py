@@ -19,14 +19,14 @@ class OtherOptions(BaseModel):
 
 
 class EntryPoint(BaseModel):
-    sn: str
-    iface: str
-    hostname: str
+    sn: str = Field(title='Serial Number', description='IP Fabric Unique Device Serial Number API column sn')
+    iface: str = Field(title='Interface',
+                       description='Interface to use as entry point. This is the intName not nameOriginal.')
+    hostname: str = Field(title='Hostname', description='Hostname of the Device')
 
 
 class Algorithm(BaseModel):
-    """Default is automatic. Adding entryPoints will change to userDefined"""
-
+    """Default is automatic. Adding entryPoints will change to userDefined."""
     vrf: Optional[str] = None
     entryPoints: Optional[List[EntryPoint]] = None
 
@@ -34,7 +34,7 @@ class Algorithm(BaseModel):
     def type(self):
         return "userDefined" if self.entryPoints else "automatic"
 
-    def algorithm_parameters(self, version: str) -> dict:
+    def algorithm_parameters(self) -> dict:
         if self.entryPoints:
             return dict(type=self.type, entryPoints=[vars(e) for e in self.entryPoints])
         else:
@@ -42,13 +42,29 @@ class Algorithm(BaseModel):
 
 
 class PathLookup(BaseModel):
-    protocol: Optional[str] = "tcp"
-    srcPorts: Optional[Union[str, int]] = "1024-65535"
-    dstPorts: Optional[Union[str, int]] = "80,443"
-    tcpFlags: Optional[list] = Field(default_factory=list)
-    icmp: Optional[ICMP] = ICMP(type=0, code=0)
-    ttl: Optional[int] = 128
-    fragmentOffset: Optional[int] = 0
+    protocol: Optional[str] = Field("tcp", title='Protocol', description="Valid protocols are tcp, udp, or icmp.")
+    srcPorts: Optional[Union[str, int]] = Field(
+        "1024-65535", title='Source Ports',
+        description='Source ports if protocol is tcp or udp. '
+                    'Can be comma separated, a range using -, or any combination.'
+    )
+    dstPorts: Optional[Union[str, int]] = Field(
+        "80,443", title='Destination Ports',
+        description='Destination ports if protocol is tcp or udp. '
+                    'Can be comma separated, a range using -, or any combination.'
+    )
+    tcpFlags: Optional[list] = Field(
+        default_factory=list, title="TCP Flags",
+        description="Optional additional flags if protocol = TCP. "
+                    "Valid flags are ['ack', 'fin', 'psh', 'rst', 'syn', 'urg']"
+    )
+    icmp: Optional[ICMP] = Field(
+        ICMP(type=0, code=0), title='ICMP Packet',
+        description="Default is Echo Reply (type=0, code=0). You can pass in an ICMP model from ipfabric_diagrams.icmp "
+                    "or specify your own values like {'type': 1, 'code': 2}.")
+    ttl: Optional[int] = Field(128, title='Time To Live', description='TTL value, default is 128.')
+    fragmentOffset: Optional[int] = Field(0, title='Fragment Offset',
+                                          description='Fragment Offset value, default is 0.')
     securedPath: Optional[bool] = True
     srcRegions: Optional[str] = ".*"
     dstRegions: Optional[str] = ".*"
@@ -69,6 +85,10 @@ class PathLookup(BaseModel):
                 raise ValueError(
                     f'Ports "{v}" is not in the valid syntax, examples: ["80", "80,443", "0-1024", "80,8000-8100,8443"]'
                 )
+            if '-' in p:
+                pn = p.split("-")
+                if int(pn[0]) >= int(pn[1]):
+                    raise ValueError(f'Ports "{p}" is invalid. {pn[0]} must be smaller than {pn[1]}.')
         return str(",".join(ports))
 
     @validator("tcpFlags")
@@ -86,7 +106,7 @@ class PathLookup(BaseModel):
         else:
             return dict(srcPorts=self.srcPorts, dstPorts=self.dstPorts, flags=self.tcpFlags)
 
-    def base_parameters(self, version: str) -> dict:
+    def base_parameters(self) -> dict:
         return dict(
             type="pathLookup",
             groupBy="siteName",
@@ -98,7 +118,7 @@ class PathLookup(BaseModel):
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
             otherOptions=vars(self.otherOptions),
-            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(version),
+            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(),
         )
 
 
@@ -113,8 +133,8 @@ class Multicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, version: str):
-        parameters = self.base_parameters(version)
+    def parameters(self):
+        parameters = self.base_parameters()
         parameters.update(
             dict(
                 pathLookupType="multicast",
@@ -128,8 +148,8 @@ class Multicast(PathLookup, BaseModel):
 
 
 class Unicast(PathLookup, BaseModel):
-    startingPoint: Union[IPv4Interface, str]
-    destinationPoint: Union[IPv4Interface, str]
+    startingPoint: Union[IPv4Interface, str] = Field(title='Source IP Address or Subnet')
+    destinationPoint: Union[IPv4Interface, str] = Field(title='Destination IP Address or Subnet')
 
     @validator("startingPoint", "destinationPoint")
     def _valid_ip(cls, v):
@@ -137,8 +157,8 @@ class Unicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
         return v
 
-    def parameters(self, version: str):
-        parameters = self.base_parameters(version)
+    def parameters(self):
+        parameters = self.base_parameters()
         parameters.update(
             dict(
                 pathLookupType="unicast",
@@ -169,7 +189,7 @@ class Host2GW(BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, version: str):
+    def parameters(self):
         parameters = dict(
             pathLookupType="hostToDefaultGW",
             type="pathLookup",
@@ -206,7 +226,7 @@ class Network(BaseModel):
             return [v]
         return v
 
-    def parameters(self, version: str):
+    def parameters(self):
         parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
         if self.all_network and ALL_NETWORK not in parameters["paths"]:
             parameters["paths"].append(ALL_NETWORK)

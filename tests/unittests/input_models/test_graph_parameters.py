@@ -18,16 +18,16 @@ class GraphParam(unittest.TestCase):
 
     def test_algorithm(self):
         alg = Algorithm(vrf="mgmt")
-        param = alg.algorithm_parameters("v4.3.0")
+        param = alg.algorithm_parameters()
         self.assertEqual(param, {"type": "automatic", "vrf": "mgmt"})
 
     def test_algorithm_entry(self):
         alg = Algorithm(entryPoints=[EntryPoint(sn="SERIAL", iface="eth0", hostname="test")])
-        param = alg.algorithm_parameters("v4.3.0")
+        param = alg.algorithm_parameters()
         self.assertEqual(param, {"type": "userDefined", "entryPoints": [{"sn": "SERIAL", "iface": "eth0", "hostname": "test"}]})
 
     def test_pathlookup(self):
-        bp = PathLookup(protocol="tcp", tcpFlags=["syn"], dstPorts="80,443").base_parameters("v4.3")
+        bp = PathLookup(protocol="tcp", tcpFlags=["syn"], dstPorts="80,443").base_parameters()
         self.assertEqual(
             bp,
             {
@@ -49,6 +49,8 @@ class GraphParam(unittest.TestCase):
         with self.assertRaises(ValueError) as err:
             PathLookup(srcPorts="hello")
         with self.assertRaises(ValueError) as err:
+            PathLookup(srcPorts="10-5")
+        with self.assertRaises(ValueError) as err:
             PathLookup(protocol="test")
         with self.assertRaises(ValueError) as err:
             PathLookup(tcpFlags=["bad"])
@@ -60,7 +62,7 @@ class GraphParam(unittest.TestCase):
         self.assertEqual(pl._l4_options(), {"type": 0, "code": 0})
 
     def test_multicast(self):
-        m = Multicast(source="1.1.1.1", group="2.2.2.2", receiver="3.3.3.3").parameters("v4.3")
+        m = Multicast(source="1.1.1.1", group="2.2.2.2", receiver="3.3.3.3").parameters()
         self.assertEqual(
             m,
             {
@@ -87,7 +89,7 @@ class GraphParam(unittest.TestCase):
             Multicast(source="1.1.1.1", group="2.2.2.2", receiver="3.3.3.3/24")
 
     def test_unicast(self):
-        u = Unicast(startingPoint="1.1.1.1", destinationPoint="2.2.2.2").parameters("v4.3")
+        u = Unicast(startingPoint="1.1.1.1", destinationPoint="2.2.2.2").parameters()
         self.assertEqual(
             u,
             {
@@ -114,7 +116,7 @@ class GraphParam(unittest.TestCase):
             Unicast(startingPoint="1.1.1.1", destinationPoint="hello")
 
     def test_host2gw(self):
-        h = Host2GW(startingPoint="1.1.1.1", vrf="mgmt").parameters("v4.3")
+        h = Host2GW(startingPoint="1.1.1.1", vrf="mgmt").parameters()
         self.assertEqual(
             h,
             {
@@ -131,5 +133,5 @@ class GraphParam(unittest.TestCase):
             Host2GW(startingPoint="3.3.3.3/24")
 
     def test_network(self):
-        n = Network(sites="L1", all_network=True).parameters("v4,3")
+        n = Network(sites="L1", all_network=True).parameters()
         self.assertEqual(n, {"type": "topology", "groupBy": "siteName", "paths": ["L1", "$main"]})

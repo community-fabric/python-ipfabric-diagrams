@@ -3,7 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from ipfabric_diagrams.input_models.graph_settings import EdgeSettings
+from ipfabric_diagrams.output_models.packet import PACKET
+from ipfabric_diagrams.output_models.trace import Trace
 
 
 class Checks(BaseModel):
@@ -62,7 +63,7 @@ class Edge(BaseModel):
     edgeSettingsId: UUID
     id: str
     labels: Labels
-    edgeSettings: Optional[EdgeSettings] = None
+    protocol: Optional[str] = ''
 
 
 class NetworkEdge(Edge, BaseModel):
@@ -73,7 +74,7 @@ class NetworkEdge(Edge, BaseModel):
 class PathLookupEdge(Edge, BaseModel):
     nextEdgeIds: List[str]
     prevEdgeIds: List[str]
-    packet: List[dict]
+    packet: List[PACKET]
     severityInfo: Severity
     sourceIfaceName: Optional[str]
     targetIfaceName: Optional[str]
@@ -88,8 +89,15 @@ class EventsSummary(BaseModel):
     global_list: list = Field(alias="global")
 
 
+class Traces(BaseModel):
+    severityInfo: Checks
+    sourcePacketId: str
+    targetPacketId: str
+    trace: List[Trace]
+
+
 class Decision(BaseModel):
-    traces: list
+    traces: List[Traces]
     trafficIn: Optional[Dict[str, List[str]]] = Field(default_factory=dict)
     trafficOut: Optional[Dict[str, List[str]]] = Field(default_factory=dict)
 
