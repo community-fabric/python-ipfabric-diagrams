@@ -3,8 +3,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from ipfabric_diagrams.input_models.graph_settings import EdgeSettings
-
 
 class Checks(BaseModel):
     green: int = Field(alias="0")
@@ -62,7 +60,7 @@ class Edge(BaseModel):
     edgeSettingsId: UUID
     id: str
     labels: Labels
-    edgeSettings: Optional[EdgeSettings] = None
+    protocol: Optional[str] = ''
 
 
 class NetworkEdge(Edge, BaseModel):

@@ -19,7 +19,7 @@ class Style(BaseModel):
             raise ValueError(f'Pattern "{v}" not in ["solid", "dashed", "dotted"]')
         return v.lower()
 
-    def style_settings(self, version: str) -> dict:
+    def style_settings(self) -> dict:
         return dict(
             color=self.color.as_hex(),
             pattern=self.pattern,
@@ -34,12 +34,12 @@ class Setting(BaseModel):
     style: Style
     type: str
 
-    def base_settings(self, version: str) -> dict:
+    def base_settings(self) -> dict:
         return dict(
             name=self.name,
             visible=self.visible,
             grouped=self.grouped,
-            style=self.style.style_settings(version),
+            style=self.style.style_settings(),
             type=self.type
         )
 
@@ -48,8 +48,8 @@ class EdgeSettings(Setting, BaseModel):
     labels: List[str] = ['protocols']
     id: Optional[UUID] = None
 
-    def settings(self, version: str) -> dict:
-        base_settings = self.base_settings(version)
+    def settings(self) -> dict:
+        base_settings = self.base_settings()
         base_settings['labels'] = self.labels
         return base_settings
 
@@ -59,10 +59,10 @@ class GroupSettings(Setting, BaseModel):
     children: List[EdgeSettings]
     id: Optional[UUID] = None
 
-    def settings(self, version: str) -> dict:
-        base_settings = self.base_settings(version)
+    def settings(self) -> dict:
+        base_settings = self.base_settings()
         base_settings.update(dict(
-            children=[child.settings(version) for child in self.children],
+            children=[child.settings() for child in self.children],
             label=self.label
         ))
         return base_settings
@@ -171,9 +171,9 @@ class NetworkSettings(GraphSettings):
                 return True
         return False
 
-    def settings(self, version: str) -> dict:
+    def settings(self) -> dict:
         settings = dict(
-            edges=[edge.settings(version) for edge in self.edges],
+            edges=[edge.settings() for edge in self.edges],
             hiddenDeviceTypes=self.hiddenDeviceTypes,
         )
         return settings
@@ -204,9 +204,9 @@ class PathLookupSettings(GraphSettings):
             self.edges[current], self.edges[current + 1] = self.edges[current + 1], self.edges[current]
         return True
 
-    def settings(self, version: str) -> dict:
+    def settings(self) -> dict:
         settings = dict(
-            edges=[edge.settings(version) for edge in self.edges],
+            edges=[edge.settings() for edge in self.edges],
             pathLookup=vars(self.pathLookup),
         )
         return settings
@@ -242,7 +242,7 @@ class Overlay(BaseModel):
     def type(self):
         return "compare" if self.snapshotToCompare else "intent"
 
-    def overlay(self, version: str) -> dict:
+    def overlay(self) -> dict:
         if self.snapshotToCompare:
             return dict(type=self.type, snapshotToCompare=self.snapshotToCompare)
         else:

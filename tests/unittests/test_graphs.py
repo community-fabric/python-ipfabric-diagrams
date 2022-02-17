@@ -7,12 +7,11 @@ from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, Overl
 
 
 class Graph(unittest.TestCase):
-    @patch("ipfabric_diagrams.graphs.IPFabricAPI.__init__", return_value=None)
-    def setUp(self, mock_ipf) -> None:
+    @patch("ipfabric_diagrams.graphs.IPFDiagram.__init__", return_value=None)
+    def setUp(self, mock_init):
         self.graph = IPFDiagram()
         self.graph.snapshots = {"$last": None, "$prev": None}
         self.graph._snapshot_id = "$last"
-        self.graph.os_version = "v4.3.0"
 
     @patch("ipfabric_diagrams.graphs.IPFDiagram._query")
     def test_diagram_json(self, mock_query):

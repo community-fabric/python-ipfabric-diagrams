@@ -34,7 +34,7 @@ class Algorithm(BaseModel):
     def type(self):
         return "userDefined" if self.entryPoints else "automatic"
 
-    def algorithm_parameters(self, version: str) -> dict:
+    def algorithm_parameters(self) -> dict:
         if self.entryPoints:
             return dict(type=self.type, entryPoints=[vars(e) for e in self.entryPoints])
         else:
@@ -106,7 +106,7 @@ class PathLookup(BaseModel):
         else:
             return dict(srcPorts=self.srcPorts, dstPorts=self.dstPorts, flags=self.tcpFlags)
 
-    def base_parameters(self, version: str) -> dict:
+    def base_parameters(self) -> dict:
         return dict(
             type="pathLookup",
             groupBy="siteName",
@@ -118,7 +118,7 @@ class PathLookup(BaseModel):
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
             otherOptions=vars(self.otherOptions),
-            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(version),
+            firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(),
         )
 
 
@@ -133,8 +133,8 @@ class Multicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, version: str):
-        parameters = self.base_parameters(version)
+    def parameters(self):
+        parameters = self.base_parameters()
         parameters.update(
             dict(
                 pathLookupType="multicast",
@@ -157,8 +157,8 @@ class Unicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
         return v
 
-    def parameters(self, version: str):
-        parameters = self.base_parameters(version)
+    def parameters(self):
+        parameters = self.base_parameters()
         parameters.update(
             dict(
                 pathLookupType="unicast",
@@ -189,7 +189,7 @@ class Host2GW(BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, version: str):
+    def parameters(self):
         parameters = dict(
             pathLookupType="hostToDefaultGW",
             type="pathLookup",
@@ -226,7 +226,7 @@ class Network(BaseModel):
             return [v]
         return v
 
-    def parameters(self, version: str):
+    def parameters(self):
         parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
         if self.all_network and ALL_NETWORK not in parameters["paths"]:
             parameters["paths"].append(ALL_NETWORK)
