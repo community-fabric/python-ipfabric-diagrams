@@ -1,3 +1,4 @@
+import importlib.resources
 import json
 import unittest
 from unittest.mock import patch
@@ -57,14 +58,16 @@ class Graph(unittest.TestCase):
 
     @patch("ipfabric_diagrams.graphs.IPFDiagram.diagram_json")
     def test_pathlookup(self, mock_json):
-        with open('pathlookup.json', 'r') as f:
-            mock_json.return_value = json.load(f)
+        mock_json.return_value = json.loads(
+            importlib.resources.read_text("tests.unittests", "pathlookup.json")
+        )
         model = self.graph.diagram_model(Unicast(startingPoint='10.241.1.203', destinationPoint='10.35.253.58'))
         self.assertIsInstance(model, GraphResult)
 
     @patch("ipfabric_diagrams.graphs.IPFDiagram.diagram_json")
     def test_network(self, mock_json):
-        with open('network.json', 'r') as f:
-            mock_json.return_value = json.load(f)
+        mock_json.return_value = json.loads(
+            importlib.resources.read_text("tests.unittests", "network.json")
+        )
         model = self.graph.diagram_model(Network())
         self.assertIsInstance(model, GraphResult)
