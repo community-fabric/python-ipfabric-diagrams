@@ -49,6 +49,8 @@ class GraphParam(unittest.TestCase):
         with self.assertRaises(ValueError) as err:
             PathLookup(srcPorts="hello")
         with self.assertRaises(ValueError) as err:
+            PathLookup(srcPorts="10-5")
+        with self.assertRaises(ValueError) as err:
             PathLookup(protocol="test")
         with self.assertRaises(ValueError) as err:
             PathLookup(tcpFlags=["bad"])

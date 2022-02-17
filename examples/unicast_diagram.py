@@ -18,17 +18,19 @@ if __name__ == '__main__':
 
     json_data = ipf.diagram_json(uni)
     model_data = ipf.diagram_model(uni)
+    a = model_data.pathlookup.passingTraffic
+    j = json_data['pathlookup']['passingTraffic']
 
     settings = PathLookupSettings()
     settings.increase_priority("ethernet")
     settings.decrease_priority("vxlan")
     print(settings.protocol_priority)
     png_data = ipf.diagram_png(uni, graph_settings=settings)
-    with open('unicast.png', 'wb') as f:
+    with open('tmp/unicast.png', 'wb') as f:
         f.write(png_data)
 
     svg_data = ipf.diagram_svg(uni, graph_settings=settings)
-    with open('unicast.svg', 'wb') as f:
+    with open('tmp/unicast.svg', 'wb') as f:
         f.write(svg_data)
 
     uni = Unicast(
@@ -39,13 +41,13 @@ if __name__ == '__main__':
         dstPorts='1025-10000',
         firstHopAlgorithm=Algorithm(entryPoints=[
             EntryPoint(sn="9AMSST2E75V", iface="GigabitEthernet0/0", hostname="L35FW1"),
-            EntryPoint(sn="9AJR4UMXS30", iface="GigabitEthernet0/0", hostname="L35FW2")
+            dict(sn="9AJR4UMXS30", iface="GigabitEthernet0/0", hostname="L35FW2")
         ]),
         otherOptions=OtherOptions(applications="(dns)")
     )
     model_data = ipf.diagram_model(uni)
     png_data = ipf.diagram_png(uni)
-    with open('unicast-entry.png', 'wb') as f:
+    with open('tmp/unicast-entry.png', 'wb') as f:
         f.write(png_data)
 
     ipf.close()
