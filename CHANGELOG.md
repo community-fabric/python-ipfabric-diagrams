@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (2022-02-17)
+### Feature
+* Trace data ([`4d94e75`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/4d94e75965bc6cb321ee1bdee483a5b4f52296a6))
+* Trace data ([`22cd175`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/22cd17536698e8587f6127794c2262fe74d5ec7a))
+
+### Fix
+* Fix for python 3.7 ([`1fad26a`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/1fad26a6cb9e8361d35e12180b53797035d9b268))
+
+### Documentation
+* Adding documentation ([`d4fab9f`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/d4fab9f7908de947cc2fde561069790cb2edc641))
+
 ## v1.1.1 (2022-02-16)
 ### Fix
 * Functional tests ([`5887d15`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/5887d1557a840e32e458869f215f0d6d9376e726))
