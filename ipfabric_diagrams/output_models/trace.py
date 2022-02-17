@@ -1,7 +1,8 @@
-from typing import Optional, List, Union, Literal
+from typing import Optional, List, Union
 
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
+from typing_extensions import Literal
 
 from ipfabric_diagrams.output_models.protocols import MPLS, Ethernet, ESP, IP
 
