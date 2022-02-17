@@ -111,7 +111,8 @@ class IPFDiagram(IPFabricAPI):
             nodes[node_id] = Node(**node)
         for edge_id, edge_json in json_data["graphResult"]["graphData"]["edges"].items():
             edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
-            edge.protocol = edge_setting_dict[edge.edgeSettingsId].name
+            edge.protocol = edge_setting_dict[edge.edgeSettingsId].name if \
+                edge.edgeSettingsId in edge_setting_dict else None
             if edge.source:
                 edge.source = nodes[edge.source]
             if edge.target:
@@ -128,7 +129,11 @@ class IPFDiagram(IPFabricAPI):
                 edge.prevEdge.append(graph_result.edges[prev_id])
             for next_id in edge.nextEdgeIds:
                 edge.nextEdge.append(graph_result.edges[next_id] if next_id in graph_result.edges else next_id)
-
+        for a in json_data["pathlookup"]['decisions'].values():
+            for b in a['traces']:
+                for c in b['trace']:
+                    for d in c['events']:
+                        print(d)
         graph_result.pathlookup = PathLookup(**json_data["pathlookup"])
         return graph_result
 
