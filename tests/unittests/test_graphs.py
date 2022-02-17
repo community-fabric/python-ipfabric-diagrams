@@ -1,9 +1,11 @@
+import json
 import unittest
 from unittest.mock import patch
 
 from ipfabric_diagrams.graphs import IPFDiagram
-from ipfabric_diagrams.input_models.graph_parameters import Network
+from ipfabric_diagrams.input_models.graph_parameters import Network, Unicast
 from ipfabric_diagrams.input_models.graph_settings import NetworkSettings, Overlay
+from ipfabric_diagrams.output_models.graph_result import GraphResult
 
 
 class Graph(unittest.TestCase):
@@ -52,3 +54,17 @@ class Graph(unittest.TestCase):
     def test_query_overlay_invalid(self):
         with self.assertRaises(ValueError) as err:
             self.graph._query({}, overlay=Overlay(snapshotToCompare="$lastLocked"))
+
+    @patch("ipfabric_diagrams.graphs.IPFDiagram.diagram_json")
+    def test_pathlookup(self, mock_json):
+        with open('pathlookup.json', 'r') as f:
+            mock_json.return_value = json.load(f)
+        model = self.graph.diagram_model(Unicast(startingPoint='10.241.1.203', destinationPoint='10.35.253.58'))
+        self.assertIsInstance(model, GraphResult)
+
+    @patch("ipfabric_diagrams.graphs.IPFDiagram.diagram_json")
+    def test_network(self, mock_json):
+        with open('network.json', 'r') as f:
+            mock_json.return_value = json.load(f)
+        model = self.graph.diagram_model(Network())
+        self.assertIsInstance(model, GraphResult)
