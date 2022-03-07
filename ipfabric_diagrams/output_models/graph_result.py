@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from ipfabric_diagrams.output_models.packet import PACKET
+from ipfabric_diagrams.output_models.protocols import PROTOCOLS
 from ipfabric_diagrams.output_models.trace import Trace
 
 
@@ -74,7 +74,7 @@ class NetworkEdge(Edge, BaseModel):
 class PathLookupEdge(Edge, BaseModel):
     nextEdgeIds: List[str]
     prevEdgeIds: List[str]
-    packet: List[PACKET]
+    packet: List[PROTOCOLS]
     severityInfo: Severity
     sourceIfaceName: Optional[str]
     targetIfaceName: Optional[str]

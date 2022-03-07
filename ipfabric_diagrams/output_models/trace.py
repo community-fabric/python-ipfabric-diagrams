@@ -4,9 +4,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 from typing_extensions import Literal
 
-from ipfabric_diagrams.output_models.protocols import MPLS, Ethernet, ESP, IP
-
-HEADER = Annotated[Union[MPLS, Ethernet, ESP, IP], Field(discriminator='type')]
+from ipfabric_diagrams.output_models.protocols import PROTOCOLS
 
 
 class SeverityInfo(BaseModel):
@@ -18,7 +16,7 @@ class SeverityInfo(BaseModel):
 
 class PacketDataMatch(BaseModel):
     field: str
-    value: str
+    value: Union[str, List[str], None]
     type: Literal['packet data match']
 
 
@@ -55,7 +53,7 @@ class TableEntryNotFound(TableEntry, BaseModel):
 
 
 class InsertHeader(BaseModel):
-    header: HEADER
+    header: PROTOCOLS
     headerType: str
     index: int
     type: Literal['insert header']
@@ -96,9 +94,13 @@ class VirtualRouting(BaseModel):
     ifaceName: str
 
 
+class AcceptPacket(BaseModel):
+    type: Literal['accept packet']
+
+
 EVENT = Annotated[
     Union[
-        PacketDataMatch, RemoveHeader, TableEntryMatch, TableEntryNotFound, VirtualRouting,
+        PacketDataMatch, RemoveHeader, TableEntryMatch, TableEntryNotFound, VirtualRouting, AcceptPacket,
         InsertHeader, PatchHeader, DropPacket, SecurityCheckIgnored, SecurityCheck
     ],
     Field(discriminator='type')
