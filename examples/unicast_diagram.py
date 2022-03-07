@@ -18,8 +18,18 @@ if __name__ == '__main__':
 
     json_data = ipf.diagram_json(uni)
     model_data = ipf.diagram_model(uni)
-    a = model_data.pathlookup.passingTraffic
-    j = json_data['pathlookup']['passingTraffic']
+
+    uni = Unicast(
+        startingPoint='10.38.115.0/24',
+        destinationPoint='10.66.126.0/24',
+        protocol='tcp',
+        srcPorts='1024-10000',
+        dstPorts='22',
+        ttl=64,
+        fragmentOffset=0
+    )
+    json_data = ipf.diagram_json(uni)
+    model_data = ipf.diagram_model(uni)
 
     settings = PathLookupSettings()
     settings.increase_priority("ethernet")
@@ -43,7 +53,8 @@ if __name__ == '__main__':
             EntryPoint(sn="9AMSST2E75V", iface="GigabitEthernet0/0", hostname="L35FW1"),
             dict(sn="9AJR4UMXS30", iface="GigabitEthernet0/0", hostname="L35FW2")
         ]),
-        otherOptions=OtherOptions(applications="(dns)")
+        otherOptions=OtherOptions(applications="(dns)"),
+        securedPath=True
     )
     model_data = ipf.diagram_model(uni)
     png_data = ipf.diagram_png(uni)
