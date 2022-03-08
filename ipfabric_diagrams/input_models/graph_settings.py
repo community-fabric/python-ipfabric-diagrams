@@ -99,10 +99,10 @@ class NetworkSettings(GraphSettings):
         super().__init__(edges=edges, hiddenDeviceTypes=['ap', 'fex', 'host', 'phone'])
 
     @staticmethod
-    def _update_edge(children: List[EdgeSettings], name: str, attribute: str):
+    def _update_edge(children: List[EdgeSettings], name: str, attribute: str, bool_value=False):
         for edge in children:
             if edge.name.lower() == name:
-                setattr(edge, attribute, False)
+                setattr(edge, attribute, bool_value)
                 return True
         return False
 
@@ -112,9 +112,9 @@ class NetworkSettings(GraphSettings):
                 setattr(edge, attribute, bool_value)
                 return True
             elif not group:
-                if isinstance(edge, GroupSettings) and self._update_edge(edge.children, name, attribute):
+                if isinstance(edge, GroupSettings) and self._update_edge(edge.children, name, attribute, bool_value):
                     return self._update_group(edge.name.lower(), 'grouped', True)
-                elif isinstance(edge, EdgeSettings) and self._update_edge([edge], name, attribute):
+                elif isinstance(edge, EdgeSettings) and self._update_edge([edge], name, attribute, bool_value):
                     return True
         return False
 
