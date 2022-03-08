@@ -4,6 +4,8 @@ from typing import Optional, Union, List
 
 from pydantic import BaseModel, validator, Field
 
+from ipfabric_diagrams.input_models.constants import VALID_LAYOUTS
+
 PORT_REGEX = re.compile(r"^\d*$|^\d*-\d*$")
 ALL_NETWORK = "$main"
 
@@ -207,11 +209,8 @@ class Layout(BaseModel):
 
     @validator("layout")
     def _valid_layout(cls, v):
-        if v and v not in ["circular", "downwardTree", "hierarchical", "radial", "universal", "upwardTree"]:
-            raise ValueError(
-                f'Layout "{v}" is not in the valid layouts of '
-                f'["circular", "downwardTree", "hierarchical", "radial", "universal", "upwardTree"]'
-            )
+        if v and v not in VALID_LAYOUTS:
+            raise ValueError(f'Layout "{v}" is not in the valid layouts of {VALID_LAYOUTS}')
         return v
 
 
