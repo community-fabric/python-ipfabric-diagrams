@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.1 (2022-03-07)
+### Fix
+* Fix for traces and protocols ([`abb13e5`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/abb13e55955984e3ebfda59a2c19091d5cfda63e))
+
 ## v1.2.0 (2022-02-17)
 ### Feature
 * Trace data ([`4d94e75`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/4d94e75965bc6cb321ee1bdee483a5b4f52296a6))
