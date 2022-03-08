@@ -66,3 +66,5 @@ DEFAULT_NETWORK = json.loads(
 DEFAULT_PATHLOOKUP = json.loads(
     importlib.resources.read_text("ipfabric_diagrams.input_models.factory_defaults", "pathLookupSettings.json")
 )
+
+VALID_LAYOUTS = ["circular", "downwardTree", "hierarchical", "radial", "universal", "upwardTree"]

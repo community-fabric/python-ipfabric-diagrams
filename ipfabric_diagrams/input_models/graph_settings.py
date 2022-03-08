@@ -124,6 +124,10 @@ class NetworkSettings(GraphSettings):
         else:
             raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
 
+    def hide_all_protocols(self):
+        for protocol_name in VALID_NET_PROTOCOLS:
+            self._update_group(protocol_name.lower(), attribute='visible', group=False)
+
     def ungroup_protocol(self, protocol_name: str):
         if protocol_name.lower() in VALID_NET_PROTOCOLS:
             return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
