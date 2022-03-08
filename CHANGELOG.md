@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.3 (2022-03-08)
+### Fix
+* Added way to unhide protocol ([`047df41`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/047df418ce25052cb29c0383efb9cc3d550d8b90))
+
+### Documentation
+* Run poetry update ([`d0adaa7`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/d0adaa794af4bf1986c548bc8c74ed1498f02567))
+
 ## v1.2.2 (2022-03-08)
 ### Fix
 * Fixes for webinar ([`595884a`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/595884a58d09b3e25e1055dfe7b583cadc9fb78d))
