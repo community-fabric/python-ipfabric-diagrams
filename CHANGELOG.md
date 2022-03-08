@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.4 (2022-03-08)
+### Fix
+* Added way to unhide protocol ([`36104c2`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/36104c2546bc3431519c72e358cca52f69e0f4d8))
+
 ## v1.2.3 (2022-03-08)
 ### Fix
 * Added way to unhide protocol ([`047df41`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/047df418ce25052cb29c0383efb9cc3d550d8b90))
