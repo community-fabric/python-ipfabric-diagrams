@@ -106,10 +106,10 @@ class NetworkSettings(GraphSettings):
                 return True
         return False
 
-    def _update_group(self, name: str, attribute: str, group: bool = False):
+    def _update_group(self, name: str, attribute: str, group: bool = False, bool_value=False):
         for edge in self.edges:
             if group and isinstance(edge, GroupSettings) and edge.name.lower() == name:
-                setattr(edge, attribute, False)
+                setattr(edge, attribute, bool_value)
                 return True
             elif not group:
                 if isinstance(edge, GroupSettings) and self._update_edge(edge.children, name, attribute):
@@ -118,9 +118,9 @@ class NetworkSettings(GraphSettings):
                     return True
         return False
 
-    def hide_protocol(self, protocol_name: str):
+    def hide_protocol(self, protocol_name: str, unhide: bool = False):
         if protocol_name.lower() in VALID_NET_PROTOCOLS:
-            return self._update_group(protocol_name.lower(), attribute='visible', group=False)
+            return self._update_group(protocol_name.lower(), attribute='visible', group=False, bool_value=unhide)
         else:
             raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
 

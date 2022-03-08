@@ -316,7 +316,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipfabric"
-version = "0.8.8"
+version = "0.8.9"
 description = "Python package for interacting with IP Fabric"
 category = "main"
 optional = false
@@ -1058,8 +1058,8 @@ invoke = [
     {file = "invoke-1.6.0.tar.gz", hash = "sha256:374d1e2ecf78981da94bfaf95366216aaec27c2d6a7b7d5818d92da55aa258d3"},
 ]
 ipfabric = [
-    {file = "ipfabric-0.8.8-py3-none-any.whl", hash = "sha256:00bf3dcae0e9baf00d0864800f8793cf88c9f86bccdac266e7faae39c51b5e25"},
-    {file = "ipfabric-0.8.8.tar.gz", hash = "sha256:e2804dda54feef0904d12bd6f80438b60200ecd5e7785699f69aac531e5251cc"},
+    {file = "ipfabric-0.8.9-py3-none-any.whl", hash = "sha256:f883874f8d79677b25ab805ea9b2b2af1b98fcc2a1f19a6591606aa15e30cddc"},
+    {file = "ipfabric-0.8.9.tar.gz", hash = "sha256:e4dd955953eeac70c5ca7bd57f4c97721c2cd066bf6078ecfc4e1956fdd773de"},
 ]
 jeepney = [
     {file = "jeepney-0.7.1-py3-none-any.whl", hash = "sha256:1b5a0ea5c0e7b166b2f5895b91a08c14de8915afda4407fb5022a195224958ac"},
