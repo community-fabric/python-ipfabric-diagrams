@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.2 (2022-03-08)
+### Fix
+* Fixes for webinar ([`595884a`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/595884a58d09b3e25e1055dfe7b583cadc9fb78d))
+
 ## v1.2.1 (2022-03-07)
 ### Fix
 * Fix for traces and protocols ([`abb13e5`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/abb13e55955984e3ebfda59a2c19091d5cfda63e))
