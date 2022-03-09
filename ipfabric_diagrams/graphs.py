@@ -1,4 +1,3 @@
-from os import environ
 from typing import Union
 
 from ipfabric.api import IPFabricAPI
@@ -19,7 +18,6 @@ GRAPHS_URL = "graphs/"
 class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        environ['IPF_VERSION'] = self.os_version
 
     def _query(
         self,
@@ -52,9 +50,10 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        unicast_swap_src_dst: bool = False
     ) -> dict:
         return self._query(
-            parameters.parameters(),
+            parameters.parameters(unicast_swap_src_dst),
             snapshot_id=snapshot_id,
             overlay=overlay,
             graph_settings=graph_settings,
@@ -66,9 +65,10 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        swap: bool = False
     ) -> bytes:
         return self._query(
-            parameters.parameters(),
+            parameters.parameters(swap),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="svg",
@@ -81,9 +81,10 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        swap: bool = False
     ) -> bytes:
         return self._query(
-            parameters.parameters(),
+            parameters.parameters(swap),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="png",
@@ -96,8 +97,9 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        swap: bool = False
     ) -> GraphResult:
-        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings)
+        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings, swap)
         edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
         if isinstance(parameters, Network):
             return self._diagram_network(json_data, edge_setting_dict)

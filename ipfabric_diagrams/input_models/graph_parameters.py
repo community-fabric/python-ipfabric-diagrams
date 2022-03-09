@@ -1,4 +1,5 @@
 import re
+from copy import deepcopy
 from ipaddress import IPv4Interface, IPv4Address
 from typing import Optional, Union, List
 
@@ -123,6 +124,16 @@ class PathLookup(BaseModel):
             firstHopAlgorithm=self.firstHopAlgorithm.algorithm_parameters(),
         )
 
+    @staticmethod
+    def swap_src_dst(parameters: dict):
+        params = deepcopy(parameters)
+        if params['protocol'] != 'icmp':
+            params['l4Options']['srcPorts'], params['l4Options']['dstPorts'] = \
+                params['l4Options']['dstPorts'], params['l4Options']['srcPorts']
+        params['srcRegions'], params['dstRegions'] = params['dstRegions'], params['srcRegions']
+        params['startingPoint'], params['destinationPoint'] = params['destinationPoint'], params['startingPoint']
+        return params
+
 
 class Multicast(PathLookup, BaseModel):
     group: Union[IPv4Address, str]
@@ -135,7 +146,7 @@ class Multicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self):
+    def parameters(self, swap=None):
         parameters = self.base_parameters()
         parameters.update(
             dict(
@@ -159,7 +170,7 @@ class Unicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address or Subnet')
         return v
 
-    def parameters(self):
+    def parameters(self, swap: bool = False):
         parameters = self.base_parameters()
         parameters.update(
             dict(
@@ -169,7 +180,7 @@ class Unicast(PathLookup, BaseModel):
                 destinationPoint=self.destinationPoint.with_prefixlen,
             )
         )
-        return parameters
+        return self.swap_src_dst(parameters) if swap else parameters
 
     def _check_subnets(self) -> bool:
         """
@@ -191,7 +202,7 @@ class Host2GW(BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self):
+    def parameters(self, swap=None):
         parameters = dict(
             pathLookupType="hostToDefaultGW",
             type="pathLookup",
@@ -225,7 +236,7 @@ class Network(BaseModel):
             return [v]
         return v
 
-    def parameters(self):
+    def parameters(self, swap=None):
         parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
         if self.all_network and ALL_NETWORK not in parameters["paths"]:
             parameters["paths"].append(ALL_NETWORK)
