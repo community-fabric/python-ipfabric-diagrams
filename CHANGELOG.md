@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.5 (2022-03-09)
+### Fix
+* Added feature to swap src and dst in unicast lookup ([`7220eaa`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/7220eaad0fff8fe963848f85df663c88230018e4))
+* Added feature to swap src and dst in unicast lookup ([`8de7338`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/8de7338828fcf270b83b6bd7eb924b55273a0ef5))
+
 ## v1.2.4 (2022-03-08)
 ### Fix
 * Added way to unhide protocol ([`36104c2`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/36104c2546bc3431519c72e358cca52f69e0f4d8))
