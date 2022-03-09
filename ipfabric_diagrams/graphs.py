@@ -65,10 +65,10 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        swap: bool = False
+        unicast_swap_src_dst: bool = False
     ) -> bytes:
         return self._query(
-            parameters.parameters(swap),
+            parameters.parameters(unicast_swap_src_dst),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="svg",
@@ -81,10 +81,10 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        swap: bool = False
+        unicast_swap_src_dst: bool = False
     ) -> bytes:
         return self._query(
-            parameters.parameters(swap),
+            parameters.parameters(unicast_swap_src_dst),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="png",
@@ -97,9 +97,9 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        swap: bool = False
+        unicast_swap_src_dst: bool = False
     ) -> GraphResult:
-        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings, swap)
+        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings, unicast_swap_src_dst)
         edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
         if isinstance(parameters, Network):
             return self._diagram_network(json_data, edge_setting_dict)
