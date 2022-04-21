@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.6 (2022-04-21)
+### Fix
+* Create requirements file for scanning ([`8472b20`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/8472b20e5ca04806c8f486f25c59b37d325b026e))
+* Create requirements file for scanning ([`65531eb`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/65531ebe337e2b0c53b1a3299c5e5fbbb3ce9e37))
+* Poetry update and change required ipfabric version ([`6c47490`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/6c47490b97eac2e2a66840a3333461793e827038))
+
 ## v1.2.5 (2022-03-09)
 ### Fix
 * Added feature to swap src and dst in unicast lookup ([`7220eaa`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/7220eaad0fff8fe963848f85df663c88230018e4))
