@@ -8,12 +8,16 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-homepage = "https://ipfabric.io/"
+homepage = "https://github.com/community-fabric/python-ipfabric-diagrams"
 repository = "https://github.com/community-fabric/python-ipfabric-diagrams"
 keywords = ["ipfabric", "ip-fabric", "community-fabric"]
 packages = [
     { include = "ipfabric_diagrams" }
 ]
+
+[tool.poetry.urls]
+"IP Fabric" = "https://ipfabric.io/"
+"Changelog" = "https://github.com/community-fabric/python-ipfabric-diagrams/blob/main/CHANGELOG.md"
 
 [tool.poetry.dependencies]
 python = "^3.7.1"
