@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.7 (2022-04-21)
+### Fix
+* Update docs ([`ec5be2b`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/ec5be2b48e532949bd47b2a5e7947e5413e164af))
+
 ## v1.2.6 (2022-04-21)
 ### Fix
 * Create requirements file for scanning ([`8472b20`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/8472b20e5ca04806c8f486f25c59b37d325b026e))
