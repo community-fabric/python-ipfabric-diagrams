@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2022-05-25)
+### Feature
+* Update ipfabric for username/password auth ([`22440b3`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/22440b34c1b74eafd762ec25221561d837c8614b))
+
 ## v1.2.7 (2022-04-21)
 ### Fix
 * Update docs ([`ec5be2b`](https://github.com/community-fabric/python-ipfabric-diagrams/commit/ec5be2b48e532949bd47b2a5e7947e5413e164af))
