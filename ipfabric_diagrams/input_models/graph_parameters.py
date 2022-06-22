@@ -22,14 +22,16 @@ class OtherOptions(BaseModel):
 
 
 class EntryPoint(BaseModel):
-    sn: str = Field(title='Serial Number', description='IP Fabric Unique Device Serial Number API column sn')
-    iface: str = Field(title='Interface',
-                       description='Interface to use as entry point. This is the intName not nameOriginal.')
-    hostname: str = Field(title='Hostname', description='Hostname of the Device')
+    sn: str = Field(title="Serial Number", description="IP Fabric Unique Device Serial Number API column sn")
+    iface: str = Field(
+        title="Interface", description="Interface to use as entry point. This is the intName not nameOriginal."
+    )
+    hostname: str = Field(title="Hostname", description="Hostname of the Device")
 
 
 class Algorithm(BaseModel):
     """Default is automatic. Adding entryPoints will change to userDefined."""
+
     vrf: Optional[str] = None
     entryPoints: Optional[List[EntryPoint]] = None
 
@@ -45,29 +47,35 @@ class Algorithm(BaseModel):
 
 
 class PathLookup(BaseModel):
-    protocol: Optional[str] = Field("tcp", title='Protocol', description="Valid protocols are tcp, udp, or icmp.")
+    protocol: Optional[str] = Field("tcp", title="Protocol", description="Valid protocols are tcp, udp, or icmp.")
     srcPorts: Optional[Union[str, int]] = Field(
-        "1024-65535", title='Source Ports',
-        description='Source ports if protocol is tcp or udp. '
-                    'Can be comma separated, a range using -, or any combination.'
+        "1024-65535",
+        title="Source Ports",
+        description="Source ports if protocol is tcp or udp. "
+        "Can be comma separated, a range using -, or any combination.",
     )
     dstPorts: Optional[Union[str, int]] = Field(
-        "80,443", title='Destination Ports',
-        description='Destination ports if protocol is tcp or udp. '
-                    'Can be comma separated, a range using -, or any combination.'
+        "80,443",
+        title="Destination Ports",
+        description="Destination ports if protocol is tcp or udp. "
+        "Can be comma separated, a range using -, or any combination.",
     )
     tcpFlags: Optional[list] = Field(
-        default_factory=list, title="TCP Flags",
+        default_factory=list,
+        title="TCP Flags",
         description="Optional additional flags if protocol = TCP. "
-                    "Valid flags are ['ack', 'fin', 'psh', 'rst', 'syn', 'urg']"
+        "Valid flags are ['ack', 'fin', 'psh', 'rst', 'syn', 'urg']",
     )
     icmp: Optional[ICMP] = Field(
-        ICMP(type=0, code=0), title='ICMP Packet',
+        ICMP(type=0, code=0),
+        title="ICMP Packet",
         description="Default is Echo Reply (type=0, code=0). You can pass in an ICMP model from ipfabric_diagrams.icmp "
-                    "or specify your own values like {'type': 1, 'code': 2}.")
-    ttl: Optional[int] = Field(128, title='Time To Live', description='TTL value, default is 128.')
-    fragmentOffset: Optional[int] = Field(0, title='Fragment Offset',
-                                          description='Fragment Offset value, default is 0.')
+        "or specify your own values like {'type': 1, 'code': 2}.",
+    )
+    ttl: Optional[int] = Field(128, title="Time To Live", description="TTL value, default is 128.")
+    fragmentOffset: Optional[int] = Field(
+        0, title="Fragment Offset", description="Fragment Offset value, default is 0."
+    )
     securedPath: Optional[bool] = True
     srcRegions: Optional[str] = ".*"
     dstRegions: Optional[str] = ".*"
@@ -88,7 +96,7 @@ class PathLookup(BaseModel):
                 raise ValueError(
                     f'Ports "{v}" is not in the valid syntax, examples: ["80", "80,443", "0-1024", "80,8000-8100,8443"]'
                 )
-            if '-' in p:
+            if "-" in p:
                 pn = p.split("-")
                 if int(pn[0]) >= int(pn[1]):
                     raise ValueError(f'Ports "{p}" is invalid. {pn[0]} must be smaller than {pn[1]}.')
@@ -127,11 +135,13 @@ class PathLookup(BaseModel):
     @staticmethod
     def swap_src_dst(parameters: dict):
         params = deepcopy(parameters)
-        if params['protocol'] != 'icmp':
-            params['l4Options']['srcPorts'], params['l4Options']['dstPorts'] = \
-                params['l4Options']['dstPorts'], params['l4Options']['srcPorts']
-        params['srcRegions'], params['dstRegions'] = params['dstRegions'], params['srcRegions']
-        params['startingPoint'], params['destinationPoint'] = params['destinationPoint'], params['startingPoint']
+        if params["protocol"] != "icmp":
+            params["l4Options"]["srcPorts"], params["l4Options"]["dstPorts"] = (
+                params["l4Options"]["dstPorts"],
+                params["l4Options"]["srcPorts"],
+            )
+        params["srcRegions"], params["dstRegions"] = params["dstRegions"], params["srcRegions"]
+        params["startingPoint"], params["destinationPoint"] = params["destinationPoint"], params["startingPoint"]
         return params
 
 
@@ -161,8 +171,8 @@ class Multicast(PathLookup, BaseModel):
 
 
 class Unicast(PathLookup, BaseModel):
-    startingPoint: Union[IPv4Interface, str] = Field(title='Source IP Address or Subnet')
-    destinationPoint: Union[IPv4Interface, str] = Field(title='Destination IP Address or Subnet')
+    startingPoint: Union[IPv4Interface, str] = Field(title="Source IP Address or Subnet")
+    destinationPoint: Union[IPv4Interface, str] = Field(title="Destination IP Address or Subnet")
 
     @validator("startingPoint", "destinationPoint")
     def _valid_ip(cls, v):

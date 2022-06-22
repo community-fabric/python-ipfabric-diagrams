@@ -50,7 +50,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        unicast_swap_src_dst: bool = False
+        unicast_swap_src_dst: bool = False,
     ) -> dict:
         return self._query(
             parameters.parameters(unicast_swap_src_dst),
@@ -65,7 +65,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        unicast_swap_src_dst: bool = False
+        unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
             parameters.parameters(unicast_swap_src_dst),
@@ -81,7 +81,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        unicast_swap_src_dst: bool = False
+        unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
             parameters.parameters(unicast_swap_src_dst),
@@ -97,7 +97,7 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
-        unicast_swap_src_dst: bool = False
+        unicast_swap_src_dst: bool = False,
     ) -> GraphResult:
         json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings, unicast_swap_src_dst)
         edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
@@ -113,8 +113,9 @@ class IPFDiagram(IPFabricAPI):
             nodes[node_id] = Node(**node)
         for edge_id, edge_json in json_data["graphResult"]["graphData"]["edges"].items():
             edge = PathLookupEdge(**edge_json) if pathlookup else NetworkEdge(**edge_json)
-            edge.protocol = edge_setting_dict[edge.edgeSettingsId].name if \
-                edge.edgeSettingsId in edge_setting_dict else None
+            edge.protocol = (
+                edge_setting_dict[edge.edgeSettingsId].name if edge.edgeSettingsId in edge_setting_dict else None
+            )
             if edge.source:
                 edge.source = nodes[edge.source]
             if edge.target:

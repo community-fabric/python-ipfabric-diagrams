@@ -17,13 +17,13 @@ class SeverityInfo(BaseModel):
 class PacketDataMatch(BaseModel):
     field: str
     value: Union[str, List[str], None]
-    type: Literal['packet data match']
+    type: Literal["packet data match"]
 
 
 class RemoveHeader(BaseModel):
     index: int
     headerType: str
-    type: Literal['remove header']
+    type: Literal["remove header"]
 
 
 class Filter(BaseModel):
@@ -45,18 +45,18 @@ class TableEntry(BaseModel):
 
 
 class TableEntryMatch(TableEntry, BaseModel):
-    type: Literal['table entry match']
+    type: Literal["table entry match"]
 
 
 class TableEntryNotFound(TableEntry, BaseModel):
-    type: Literal['table entry not found']
+    type: Literal["table entry not found"]
 
 
 class InsertHeader(BaseModel):
     header: PROTOCOLS
     headerType: str
     index: int
-    type: Literal['insert header']
+    type: Literal["insert header"]
 
 
 class Patch(BaseModel):
@@ -67,17 +67,17 @@ class Patch(BaseModel):
 class PatchHeader(BaseModel):
     patch: Patch
     index: int
-    type: Literal['patch header']
+    type: Literal["patch header"]
 
 
 class DropPacket(BaseModel):
-    type: Literal['drop packet']
+    type: Literal["drop packet"]
     reason: str
     severityInfo: Optional[SeverityInfo] = None
 
 
 class SecurityCheck(BaseModel):
-    type: Literal['security check']
+    type: Literal["security check"]
     decidingPolicyName: Optional[str] = None
     decidingRule: Optional[List[int]] = None
     protocolId: str
@@ -86,24 +86,33 @@ class SecurityCheck(BaseModel):
 
 
 class SecurityCheckIgnored(SecurityCheck, BaseModel):
-    type: Literal['security check ignored']
+    type: Literal["security check ignored"]
 
 
 class VirtualRouting(BaseModel):
-    type: Literal['virtual routing']
+    type: Literal["virtual routing"]
     ifaceName: str
 
 
 class AcceptPacket(BaseModel):
-    type: Literal['accept packet']
+    type: Literal["accept packet"]
 
 
 EVENT = Annotated[
     Union[
-        PacketDataMatch, RemoveHeader, TableEntryMatch, TableEntryNotFound, VirtualRouting, AcceptPacket,
-        InsertHeader, PatchHeader, DropPacket, SecurityCheckIgnored, SecurityCheck
+        PacketDataMatch,
+        RemoveHeader,
+        TableEntryMatch,
+        TableEntryNotFound,
+        VirtualRouting,
+        AcceptPacket,
+        InsertHeader,
+        PatchHeader,
+        DropPacket,
+        SecurityCheckIgnored,
+        SecurityCheck,
     ],
-    Field(discriminator='type')
+    Field(discriminator="type"),
 ]
 
 
