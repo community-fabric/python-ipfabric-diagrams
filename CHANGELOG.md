@@ -1,6 +1,8 @@
 # Changelog
 
-<!--next-version-placeholder-->
+## 4.4.3 (2022-06-22)
+### CI
+* Remove semantic-release and updated GH Actions
 
 ## v1.3.0 (2022-05-25)
 ### Feature

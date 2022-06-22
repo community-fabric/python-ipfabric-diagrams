@@ -12,6 +12,14 @@ environments. From in-depth discovery, through graph visualization, to packet wa
 Fabric enables to confidently replace manual tasks necessary to handle growing network complexity driven by relentless
 digital transformation.
 
+## Versioning
+Starting with IP Fabric version 5.0.x the python-ipfabric and python-ipfabric-diagrams will need to
+match your IP Fabric version.  The API's are changing and instead of `api/v1` they will now be `api/v5.0`.
+
+Version 5.1 will have backwards compatability with version 5.0 however 6.0 will not support any 5.x versions.
+By ensuring that your ipfabric SDK's match your IP Fabric version will ensure compatibility and will continue to work.
+
+
 ## Installation
 
 ```
@@ -53,15 +61,9 @@ poetry run pytest
 poetry build
 ```
 
-GitHub Actions will publish and release. Make sure to tag your commits:
-
-* ci: Changes to our CI configuration files and scripts
-* docs: No changes just documentation
-* test: Added test cases
-* perf: A code change that improves performance
-* refactor: A code change that neither fixes a bug nor adds a feature
-* style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-* fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning). 
-* feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning). 
-* BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking
-API change (correlating with MAJOR in Semantic Versioning). A BREAKING CHANGE can be part of commits of any type.
+Prior to pushing changes run:
+```
+poetry run black ipfabric_diagrams
+poetry export -f requirements.txt -o requirements.txt --without-hashes
+git add requirements.txt
+```

@@ -63,7 +63,7 @@ class Edge(BaseModel):
     edgeSettingsId: UUID
     id: str
     labels: Labels
-    protocol: Optional[str] = ''
+    protocol: Optional[str] = ""
 
 
 class NetworkEdge(Edge, BaseModel):
