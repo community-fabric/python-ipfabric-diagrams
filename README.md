@@ -32,7 +32,7 @@ This package is used for diagramming via the API for IP Fabric v4.3.0.
 Examples can be located under [examples](examples/) directory.
 
 ## Authentication
-Please take a look at [python-ipfabric](https://github.com/community-fabric/python-ipfabric/blob/main/examples/basic.py) 
+Please take a look at [python-ipfabric](https://github.com/community-fabric/python-ipfabric#authentication) 
 for all authentication options.
 
 ```python
