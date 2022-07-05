@@ -53,7 +53,7 @@ class IPFDiagram(IPFabricAPI):
         unicast_swap_src_dst: bool = False,
     ) -> dict:
         return self._query(
-            parameters.parameters(unicast_swap_src_dst),
+            parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             graph_settings=graph_settings,
@@ -68,7 +68,7 @@ class IPFDiagram(IPFabricAPI):
         unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
-            parameters.parameters(unicast_swap_src_dst),
+            parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="svg",
@@ -84,7 +84,7 @@ class IPFDiagram(IPFabricAPI):
         unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
-            parameters.parameters(unicast_swap_src_dst),
+            parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
             image="png",

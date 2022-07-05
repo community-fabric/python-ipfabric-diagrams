@@ -2,7 +2,6 @@ import os
 import unittest
 
 from ipfabric import IPFClient
-from pkg_resources import parse_version
 
 from ipfabric_diagrams import IPFDiagram, Network, Host2GW
 
@@ -13,15 +12,11 @@ condition = False if os.getenv('IPF_TOKEN', None) and os.getenv('IPF_URL', None)
 class MyTestCase(unittest.TestCase):
     def test_site(self):
         ipf = IPFDiagram()
-        if parse_version(ipf.os_version) < parse_version("4.3"):
-            self.skipTest('IP Fabric version under 4.3')
         graph = ipf.diagram_json(Network())
         self.assertIsInstance(graph, dict)
 
     def test_picture(self):
         ipf = IPFDiagram()
-        if parse_version(ipf.os_version) < parse_version("4.3"):
-            self.skipTest('IP Fabric version under 4.3')
         graph = ipf.diagram_png(Network())
         self.assertIsInstance(graph, bytes)
         graph = ipf.diagram_svg(Network())
@@ -33,8 +28,6 @@ class MyTestCase(unittest.TestCase):
 
     def test_host2gw(self):
         ipf = IPFDiagram()
-        if parse_version(ipf.os_version) < parse_version("4.3"):
-            self.skipTest('IP Fabric version under 4.3')
         host = IPFClient().fetch('tables/addressing/hosts', columns=["ip"], limit=1)[0]['ip']
         graph = ipf.diagram_json(Host2GW(startingPoint=host))
         self.assertIsInstance(graph, dict)

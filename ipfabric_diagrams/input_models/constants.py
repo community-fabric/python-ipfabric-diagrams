@@ -31,6 +31,7 @@ SUBNET = Label(name="subnet", center=True)
 AS = Label(name="as", center=False)
 VALID_PROTOCOL_LABELS = dict(
     dgw=Protocol(name="dgw", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
+    dgwIpv6=Protocol(name="dgwIpv6", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
     ebgp=Protocol(name="ebgp", labels=[PROTOCOL, IP_ADDR, AS, Label(name="prefix", center=False)]),
     eigrp=Protocol(name="eigrp", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET, AS]),
     fex=Protocol(name="fex", labels=[PROTOCOL, INT_NAME]),
@@ -61,7 +62,9 @@ VALID_PROTOCOL_LABELS = dict(
     ),
     pim=Protocol(name="pim", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
     rib=Protocol(name="rib", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
+    ribIpv6=Protocol(name="ribIpv6", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
     rip=Protocol(name="rip", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
+    rsvp=Protocol(name="rsvp", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
     stp=Protocol(name="stp", labels=[PROTOCOL, INT_NAME, Label(name="media", center=False)]),
     vxlan=Protocol(name="vxlan", labels=[PROTOCOL, INT_NAME, IP_ADDR, SUBNET]),
     wired=Protocol(name="wired", labels=[PROTOCOL, INT_NAME]),

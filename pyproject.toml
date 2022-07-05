@@ -22,7 +22,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.7.1"
 pydantic = "^1.8.2"
-ipfabric = "4.4.*"
+ipfabric = "5.0.0b1"
 typing-extensions = "^4.1.1"
 
 [tool.poetry.dev-dependencies]
