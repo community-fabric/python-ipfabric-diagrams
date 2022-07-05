@@ -13,7 +13,7 @@ ALL_NETWORK = "$main"
 
 class Instance(BaseModel):
     rootId: str
-    vlanId: str
+    vlanId: int
     visible: bool = True
     grouped: bool = True
 
@@ -32,7 +32,7 @@ class Technologies(BaseModel):
         if self.stpInstances:
             params["stpInstances"] = dict(isolate=self.stpInstances.isolate, instances=list())
             for i in self.stpInstances.instances:
-                params["stpInstances"]["instances"].append(vars(1))
+                params["stpInstances"]["instances"].append(vars(i))
         return params
 
 

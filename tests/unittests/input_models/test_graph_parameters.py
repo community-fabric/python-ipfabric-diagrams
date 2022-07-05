@@ -24,7 +24,8 @@ class GraphParam(unittest.TestCase):
     def test_algorithm_entry(self):
         alg = Algorithm(entryPoints=[EntryPoint(sn="SERIAL", iface="eth0", hostname="test")])
         param = alg.algorithm_parameters()
-        self.assertEqual(param, {"type": "userDefined", "entryPoints": [{"sn": "SERIAL", "iface": "eth0", "hostname": "test"}]})
+        self.assertEqual(param, {"type": "userDefined",
+                                 "entryPoints": [{"sn": "SERIAL", "iface": "eth0", "hostname": "test"}]})
 
     def test_pathlookup(self):
         bp = PathLookup(protocol="tcp", tcpFlags=["syn"], dstPorts="80,443").base_parameters()
@@ -135,3 +136,9 @@ class GraphParam(unittest.TestCase):
     def test_network(self):
         n = Network(sites="L1", all_network=True).parameters()
         self.assertEqual(n, {"type": "topology", "groupBy": "siteName", "paths": ["L1", "$main"]})
+
+    def test_instance(self):
+        t = Technologies(
+            stpInstances=dict(instances=[dict(rootId="aabb.cc02.c400", vlanId=185)])).technologies_parameters()
+        self.assertEqual(t, {'expandDeviceGroups': [], 'stpInstances': {'isolate': False, 'instances':
+            [{'rootId': 'aabb.cc02.c400', 'vlanId': 185, 'visible': True, 'grouped': True}]}})
