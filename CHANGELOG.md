@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.0 (2022-07-13)
+### Features
+* Updated for v5.0.0
+* Added Technologies input for layer 2 diagrams
+
 ## 4.4.3 (2022-06-22)
 ### CI
 * Remove semantic-release and updated GH Actions
