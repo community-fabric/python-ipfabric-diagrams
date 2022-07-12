@@ -11,6 +11,31 @@ PORT_REGEX = re.compile(r"^\d*$|^\d*-\d*$")
 ALL_NETWORK = "$main"
 
 
+class Instance(BaseModel):
+    rootId: str
+    vlanId: int
+    visible: bool = True
+    grouped: bool = True
+
+
+class STPInstances(BaseModel):
+    isolate: bool = False
+    instances: List[Instance]
+
+
+class Technologies(BaseModel):
+    expandDeviceGroups: Optional[List[str]] = Field(default_factory=list)
+    stpInstances: Optional[STPInstances]
+
+    def technologies_parameters(self) -> dict:
+        params = dict(expandDeviceGroups=self.expandDeviceGroups)
+        if self.stpInstances:
+            params["stpInstances"] = dict(isolate=self.stpInstances.isolate, instances=list())
+            for i in self.stpInstances.instances:
+                params["stpInstances"]["instances"].append(vars(i))
+        return params
+
+
 class ICMP(BaseModel):
     type: int
     code: int
@@ -156,7 +181,7 @@ class Multicast(PathLookup, BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, swap=None):
+    def parameters(self):
         parameters = self.base_parameters()
         parameters.update(
             dict(
@@ -212,7 +237,7 @@ class Host2GW(BaseModel):
             raise ValueError(f'IP "{v}" not a valid IP Address')
         return v
 
-    def parameters(self, swap=None):
+    def parameters(self):
         parameters = dict(
             pathLookupType="hostToDefaultGW",
             type="pathLookup",
@@ -239,6 +264,7 @@ class Network(BaseModel):
     sites: Optional[Union[str, List[str]]] = [ALL_NETWORK]
     all_network: Optional[bool] = Field(False, description="Show all sites as clouds, UI option 'All Network'")
     layouts: Optional[List[Layout]] = None
+    technologies: Optional[Technologies] = None
 
     @validator("sites")
     def _format_paths(cls, v):
@@ -246,10 +272,12 @@ class Network(BaseModel):
             return [v]
         return v
 
-    def parameters(self, swap=None):
+    def parameters(self):
         parameters = dict(type="topology", groupBy="siteName", paths=self.sites.copy())
         if self.all_network and ALL_NETWORK not in parameters["paths"]:
             parameters["paths"].append(ALL_NETWORK)
         if self.layouts:
             parameters["layouts"] = [vars(l) for l in self.layouts]
+        if self.technologies:
+            parameters["technologies"] = self.technologies.technologies_parameters()
         return parameters
