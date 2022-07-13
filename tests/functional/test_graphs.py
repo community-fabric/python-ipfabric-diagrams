@@ -3,7 +3,7 @@ import unittest
 
 from ipfabric import IPFClient
 
-from ipfabric_diagrams import IPFDiagram, Network, Host2GW
+from ipfabric_diagrams import IPFDiagram, Network, Host2GW, Unicast
 
 condition = False if os.getenv('IPF_TOKEN', None) and os.getenv('IPF_URL', None) else True
 
@@ -30,6 +30,12 @@ class MyTestCase(unittest.TestCase):
         ipf = IPFDiagram()
         host = IPFClient().fetch('tables/addressing/hosts', columns=["ip"], limit=1)[0]['ip']
         graph = ipf.diagram_json(Host2GW(startingPoint=host))
+        self.assertIsInstance(graph, dict)
+
+    def test_unicast(self):
+        ipf = IPFDiagram()
+        hosts = IPFClient().fetch('tables/addressing/hosts', columns=["ip"], limit=2)
+        graph = ipf.diagram_json(Unicast(startingPoint=hosts[0]['ip'], destinationPoint=hosts[1]['ip']))
         self.assertIsInstance(graph, dict)
 
 

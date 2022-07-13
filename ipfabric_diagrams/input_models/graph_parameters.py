@@ -102,6 +102,7 @@ class PathLookup(BaseModel):
         0, title="Fragment Offset", description="Fragment Offset value, default is 0."
     )
     securedPath: Optional[bool] = True
+    enableRegions: Optional[bool] = False
     srcRegions: Optional[str] = ".*"
     dstRegions: Optional[str] = ".*"
     otherOptions: Optional[OtherOptions] = Field(default_factory=OtherOptions)
@@ -150,6 +151,7 @@ class PathLookup(BaseModel):
             ttl=self.ttl,
             fragmentOffset=self.fragmentOffset,
             securedPath=self.securedPath,
+            enableRegions=self.enableRegions,
             srcRegions=self.srcRegions,
             dstRegions=self.dstRegions,
             l4Options=self._l4_options(),
