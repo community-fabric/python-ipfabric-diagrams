@@ -24,6 +24,7 @@ python = "^3.7.1"
 pydantic = "^1.8.2"
 ipfabric = "5.0.*"
 typing-extensions = "^4.1.1"
+rich = {version = "^12.5.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -31,6 +32,8 @@ pytest-cov = "^3.0.0"
 flake8 = "^4.0.1"
 black = "^22.3"
 
+[tool.poetry.extras]
+examples = ["rich"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
