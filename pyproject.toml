@@ -22,7 +22,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.7.1"
 pydantic = "^1.8.2"
-ipfabric = "5.0.*"
+ipfabric = "~5.0.11"
 typing-extensions = "^4.1.1"
 rich = {version = "^12.5.1", optional = true}
 
@@ -36,7 +36,7 @@ black = "^22.3"
 examples = ["rich"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.1.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
