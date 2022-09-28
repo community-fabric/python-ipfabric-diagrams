@@ -64,6 +64,7 @@ poetry build
 Prior to pushing changes run:
 ```
 poetry run black ipfabric_diagrams
+poetry update
 poetry export -f requirements.txt -o requirements.txt --without-hashes
 git add requirements.txt
 ```

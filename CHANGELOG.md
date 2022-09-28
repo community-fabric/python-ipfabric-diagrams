@@ -1,6 +1,20 @@
 # Changelog
 
-## 5.0.0 (2022-07-13)
+## 5.0.2 (2022-07-13)
+### Features
+* Update dependencies
+### CI/CD
+* Add Community Fabric Slack Notification
+
+## 5.0.2 (2022-07-13)
+### Features
+* Fix Unicast and Multicast Lookups
+
+## 5.0.1 (2022-07-13)
+### Features
+* Updated for ICMP
+
+## 5.0.0 (2022-07-12)
 ### Features
 * Updated for v5.0.0
 * Added Technologies input for layer 2 diagrams
