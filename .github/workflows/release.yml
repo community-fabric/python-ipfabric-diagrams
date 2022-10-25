@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.5.0
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish to PyPi
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.5.0
       - uses: actions/setup-python@v4
         with:
           python-version: 3.8
