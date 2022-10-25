@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Dict, List, Optional
 
 from ipfabric.api import IPFabricAPI
 
@@ -17,6 +17,7 @@ GRAPHS_URL = "graphs/"
 
 class IPFDiagram(IPFabricAPI):
     def __init__(self, **kwargs):
+        kwargs["timeout"] = kwargs.get("timeout", 15)
         super().__init__(**kwargs)
 
     def _query(
@@ -26,6 +27,7 @@ class IPFDiagram(IPFabricAPI):
         overlay: Overlay = None,
         image: str = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        attr_filters: Optional[Dict[str, List[str]]] = None,
     ):
         """
         Submits a query, does no formating on the parameters.  Use for copy/pasting from the webpage.
@@ -40,6 +42,8 @@ class IPFDiagram(IPFabricAPI):
             payload["overlay"] = overlay.overlay()
         if graph_settings:
             payload["settings"] = graph_settings.settings()
+        if attr_filters or self.attribute_filters:
+            payload["attributeFilters"] = attr_filters or self.attribute_filters
         res = self.post(url, json=payload)
         res.raise_for_status()
         return res.content if image else res.json()
@@ -50,12 +54,14 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        attr_filters: Optional[Dict[str, List[str]]] = None,
         unicast_swap_src_dst: bool = False,
     ) -> dict:
         return self._query(
             parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
+            attr_filters=attr_filters,
             graph_settings=graph_settings,
         )
 
@@ -65,12 +71,14 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        attr_filters: Optional[Dict[str, List[str]]] = None,
         unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
             parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
+            attr_filters=attr_filters,
             image="svg",
             graph_settings=graph_settings,
         )
@@ -81,12 +89,14 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        attr_filters: Optional[Dict[str, List[str]]] = None,
         unicast_swap_src_dst: bool = False,
     ) -> bytes:
         return self._query(
             parameters.parameters(unicast_swap_src_dst) if isinstance(parameters, Unicast) else parameters.parameters(),
             snapshot_id=snapshot_id,
             overlay=overlay,
+            attr_filters=attr_filters,
             image="png",
             graph_settings=graph_settings,
         )
@@ -97,9 +107,12 @@ class IPFDiagram(IPFabricAPI):
         snapshot_id: str = None,
         overlay: Overlay = None,
         graph_settings: Union[NetworkSettings, PathLookupSettings, GraphSettings] = None,
+        attr_filters: Optional[Dict[str, List[str]]] = None,
         unicast_swap_src_dst: bool = False,
     ) -> GraphResult:
-        json_data = self.diagram_json(parameters, snapshot_id, overlay, graph_settings, unicast_swap_src_dst)
+        json_data = self.diagram_json(
+            parameters, snapshot_id, overlay, graph_settings, attr_filters, unicast_swap_src_dst
+        )
         edge_setting_dict = self._diagram_edge_settings(json_data["graphResult"]["settings"])
         if isinstance(parameters, Network):
             return self._diagram_network(json_data, edge_setting_dict)

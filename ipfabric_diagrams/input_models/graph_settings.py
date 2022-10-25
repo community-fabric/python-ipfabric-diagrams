@@ -120,19 +120,22 @@ class NetworkSettings(GraphSettings):
 
     def hide_protocol(self, protocol_name: str, unhide: bool = False):
         if protocol_name.lower() in VALID_NET_PROTOCOLS:
-            return self._update_group(protocol_name.lower(), attribute='visible', group=False, bool_value=unhide)
+            return self._update_group(VALID_NET_PROTOCOLS[protocol_name.lower()], attribute='visible', group=False,
+                                      bool_value=unhide)
         else:
-            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+            raise KeyError(
+                f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS.values()}")
 
     def hide_all_protocols(self):
-        for protocol_name in VALID_NET_PROTOCOLS:
-            self._update_group(protocol_name.lower(), attribute='visible', group=False)
+        for protocol_name in VALID_NET_PROTOCOLS.values():
+            self._update_group(protocol_name, attribute='visible', group=False)
 
     def ungroup_protocol(self, protocol_name: str):
         if protocol_name.lower() in VALID_NET_PROTOCOLS:
-            return self._update_group(protocol_name.lower(), attribute='grouped', group=False)
+            return self._update_group(VALID_NET_PROTOCOLS[protocol_name.lower()], attribute='grouped', group=False)
         else:
-            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+            raise KeyError(
+                f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS.values()}")
 
     def hide_group(self, group_name: str):
         group_names = [g.name.lower() for g in self.edges if isinstance(g, GroupSettings)]
@@ -162,7 +165,10 @@ class NetworkSettings(GraphSettings):
     def change_label(self, protocol_name: str, label_name: str):
         protocol_name, label_name = protocol_name.lower(), label_name.lower()
         if protocol_name not in VALID_NET_PROTOCOLS:
-            raise KeyError(f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS}")
+            raise KeyError(
+                f"Protocol {protocol_name} does not exist.  Valid protocols are {VALID_NET_PROTOCOLS.values()}")
+        else:
+            protocol_name = VALID_NET_PROTOCOLS[protocol_name]
         if label_name not in VALID_PROTOCOL_LABELS[protocol_name].labels:
             raise KeyError(f"Label {label_name} does not exist for protocol {protocol_name}.  "
                            f"Valid labels for {protocol_name} are {VALID_PROTOCOL_LABELS[protocol_name].labels}")
