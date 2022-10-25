@@ -13,6 +13,7 @@ class Graph(unittest.TestCase):
     @patch("ipfabric_diagrams.graphs.IPFDiagram.__init__", return_value=None)
     def setUp(self, mock_init):
         self.graph = IPFDiagram()
+        self.graph.attribute_filters = None
         self.graph.snapshots = {"$last": None, "$prev": None}
         self.graph._snapshot_id = "$last"
 

@@ -72,7 +72,7 @@ VALID_PROTOCOL_LABELS = dict(
     xdp=Protocol(name="xdp", labels=[PROTOCOL, INT_NAME]),
 )
 
-VALID_NET_PROTOCOLS = VALID_PROTOCOL_LABELS.keys()
+VALID_NET_PROTOCOLS = {p.lower(): p for p in VALID_PROTOCOL_LABELS.keys()}
 
 VALID_DEV_TYPES = [
     "aciLeaf",
