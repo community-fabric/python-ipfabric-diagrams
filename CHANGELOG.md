@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.0.0 (2022-XX-XX)
+## 6.0.0 (2022-11-16)
 ### Features
 * Updates for v6.0.0 and Attribute Filter
 * Fix for dgwIpv6 protocol

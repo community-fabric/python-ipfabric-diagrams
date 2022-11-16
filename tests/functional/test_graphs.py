@@ -6,6 +6,8 @@ from ipfabric import IPFClient
 
 from ipfabric_diagrams import IPFDiagram, Network, Host2GW, Unicast
 
+os.environ["IPF_VERIFY"] = "false"
+
 condition = False if os.getenv('IPF_TOKEN', None) and os.getenv('IPF_URL', None) else True
 
 
