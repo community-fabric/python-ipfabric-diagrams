@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.0.1 (2022-12-02)
+### Fix
+* Updated dependancies
+
 ## 6.0.0 (2022-11-16)
 ### Features
 * Updates for v6.0.0 and Attribute Filter
