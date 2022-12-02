@@ -2,8 +2,6 @@
 
 ipfabric-diagrams is a Python module for connecting to and graphing topologies against an IP Fabric instance.
 
-[![Requirements Status](https://requires.io/github/community-fabric/python-ipfabric-diagrams/requirements.svg?branch=develop)](https://requires.io/github/community-fabric/python-ipfabric-diagrams/requirements/?branch=develop)
-
 ## About
 
 Founded in 2015, [IP Fabric](https://ipfabric.io/) develops network infrastructure visibility and analytics solution to
@@ -65,6 +63,4 @@ Prior to pushing changes run:
 ```
 poetry run black ipfabric_diagrams
 poetry update
-poetry export -f requirements.txt -o requirements.txt --without-hashes
-git add requirements.txt
 ```
