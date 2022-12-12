@@ -214,7 +214,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipfabric"
-version = "6.0.5"
+version = "6.0.6"
 description = "Python package for interacting with IP Fabric"
 category = "main"
 optional = false
@@ -670,8 +670,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 ipfabric = [
-    {file = "ipfabric-6.0.5-py3-none-any.whl", hash = "sha256:6683697364e2ac7ac1f124e405e711da4fbd907c598bf9cddd70c4df0e032feb"},
-    {file = "ipfabric-6.0.5.tar.gz", hash = "sha256:573a0ac814465f7222328641d80c4608b5fa6470325890ee4b7926e139dba4a2"},
+    {file = "ipfabric-6.0.6-py3-none-any.whl", hash = "sha256:7e65392526a93aba54857475e5a6a3d2c118b9f2d4397b0cb3fe3d016991db7c"},
+    {file = "ipfabric-6.0.6.tar.gz", hash = "sha256:2a57945414c7db9249fe0f4e0bbce3b0ee0a4167e43d77184616f27bdf4445fc"},
 ]
 ipfabric-httpx-auth = [
     {file = "ipfabric_httpx_auth-6.0.0-py3-none-any.whl", hash = "sha256:3b8939acafa976815a12ea4bd4c3190d832029f3158d338ad8de02f01313fe64"},
