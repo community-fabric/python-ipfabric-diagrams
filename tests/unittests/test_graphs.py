@@ -1,7 +1,7 @@
 import importlib.resources
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from ipfabric_diagrams.graphs import IPFDiagram
 from ipfabric_diagrams.input_models.graph_parameters import Network, Unicast
@@ -14,7 +14,10 @@ class Graph(unittest.TestCase):
     def setUp(self, mock_init):
         self.graph = IPFDiagram()
         self.graph.attribute_filters = None
-        self.graph.snapshots = {"$last": None, "$prev": None}
+        snapshot = MagicMock()
+        snapshot.loaded = True
+        snapshot.disabled_graph_cache = None
+        self.graph.snapshots = {"$last": snapshot, "$prev": snapshot}
         self.graph._snapshot_id = "$last"
 
     @patch("ipfabric_diagrams.graphs.IPFDiagram._query")
