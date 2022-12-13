@@ -20,6 +20,14 @@ class IPFDiagram(IPFabricAPI):
         kwargs["timeout"] = kwargs.get("timeout", 15)
         super().__init__(**kwargs)
 
+    def _check_graph_cache(self, snapshot_id):
+        snapshot_id = snapshot_id or self.snapshot_id
+        if snapshot_id not in self.loaded_snapshots:
+            raise ValueError(f"Snapshot {snapshot_id} is not loaded or not found in IP Fabric.")
+        if self.snapshots[snapshot_id].disabled_graph_cache:
+            raise ValueError(f"Snapshot {snapshot_id} has Graph Cache tasks disabled.")
+        return snapshot_id
+
     def _query(
         self,
         parameters: dict,
@@ -35,10 +43,10 @@ class IPFDiagram(IPFabricAPI):
         :return: list: List of Dictionary objects.
         """
         url = GRAPHS_URL + image if image else GRAPHS_URL
-        payload = dict(parameters=parameters, snapshot=snapshot_id or self.snapshot_id)
+        payload = dict(parameters=parameters, snapshot=self._check_graph_cache(snapshot_id))
         if overlay:
-            if overlay.type == "compare" and overlay.snapshotToCompare not in self.snapshots:
-                raise ValueError(f"Snapshot {overlay.snapshotToCompare} not found in IP Fabric.")
+            if overlay.type == "compare":
+                self._check_graph_cache(overlay.snapshotToCompare)
             payload["overlay"] = overlay.overlay()
         if graph_settings:
             payload["settings"] = graph_settings.settings()
