@@ -176,7 +176,7 @@ socks = ["socksio (>=1.0.0,<2.0.0)"]
 
 [[package]]
 name = "httpx"
-version = "0.23.1"
+version = "0.23.3"
 description = "The next generation HTTP client."
 category = "main"
 optional = false
@@ -228,7 +228,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipfabric"
-version = "6.0.7"
+version = "6.0.9"
 description = "Python package for interacting with IP Fabric"
 category = "main"
 optional = false
@@ -236,7 +236,7 @@ python-versions = ">=3.7.1,<4.0.0"
 
 [package.dependencies]
 deepdiff = ">=6.2.2,<7.0.0"
-httpx = ">=0.23.0,<0.24.0"
+httpx = ">=0.23.2,<0.24.0"
 ipfabric-httpx-auth = ">=6.0.0,<7.0.0"
 macaddress = ">=2.0.2,<2.1.0"
 pydantic = ">=1.8.2,<2.0.0"
@@ -661,8 +661,8 @@ httpcore = [
     {file = "httpcore-0.16.2.tar.gz", hash = "sha256:c35c5176dc82db732acfd90b581a3062c999a72305df30c0fc8fafd8e4aca068"},
 ]
 httpx = [
-    {file = "httpx-0.23.1-py3-none-any.whl", hash = "sha256:0b9b1f0ee18b9978d637b0776bfd7f54e2ca278e063e3586d8f01cda89e042a8"},
-    {file = "httpx-0.23.1.tar.gz", hash = "sha256:202ae15319be24efe9a8bd4ed4360e68fde7b38bcc2ce87088d416f026667d19"},
+    {file = "httpx-0.23.3-py3-none-any.whl", hash = "sha256:a211fcce9b1254ea24f0cd6af9869b3d29aba40154e947d2a07bb499b3e310d6"},
+    {file = "httpx-0.23.3.tar.gz", hash = "sha256:9818458eb565bb54898ccb9b8b251a28785dd4a55afbc23d0eb410754fe7d0f9"},
 ]
 idna = [
     {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
@@ -677,8 +677,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 ipfabric = [
-    {file = "ipfabric-6.0.7-py3-none-any.whl", hash = "sha256:40b916b52c06022105ab72267cb58344f938b14025ed6e398702ce4a8c8035e7"},
-    {file = "ipfabric-6.0.7.tar.gz", hash = "sha256:fe6305668b7c9df087f6ae5934e31dbb696b024a2ee1ed52578a5d171575e393"},
+    {file = "ipfabric-6.0.9-py3-none-any.whl", hash = "sha256:a65f8df32c826efa93370fba2c55233e17e852d12cf8abde6afadeaaf1b6c722"},
+    {file = "ipfabric-6.0.9.tar.gz", hash = "sha256:f56b71b8895c87bef806c6883d629737527278100aa4d91be283d5db86537330"},
 ]
 ipfabric-httpx-auth = [
     {file = "ipfabric_httpx_auth-6.0.0-py3-none-any.whl", hash = "sha256:3b8939acafa976815a12ea4bd4c3190d832029f3158d338ad8de02f01313fe64"},
